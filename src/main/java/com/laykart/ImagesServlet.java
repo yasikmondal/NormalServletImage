@@ -126,10 +126,10 @@ public class ImagesServlet extends HttpServlet {
     byte[] imageBytes = byteBuffer.array();
 
     // Write the original image to Cloud Storage
-   /* gcsService.createOrReplace(
+    gcsService.createOrReplace(
         new GcsFilename(bucket, "image.jpeg"),
         new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-        ByteBuffer.wrap(imageBytes));*/
+        ByteBuffer.wrap(imageBytes));
     //[END original_image]
 
     //[START resize]
