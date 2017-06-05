@@ -1,18 +1,18 @@
 /**
- * Copyright 2015 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2015 Google Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.laykart;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.Objects;
@@ -24,7 +24,6 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
@@ -53,78 +52,77 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class ImagesServlet extends HttpServlet {
   final String bucket = "laykart-165108.appspot.com";
-  String bucketName = "laykart-165108.appspot.com/leyKart-images";
+  String bucketName = "laykart-165108.appspot.com";
   String destinationFolder = "laykart-165108.appspot.com/1xConvert";
 
   // [START gcs]
   private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
-		  
       .initialRetryDelayMillis(10)
       .retryMaxAttempts(10)
       .totalRetryPeriodMillis(15000)
-      
       .build());
   // [END gcs]
   
   public static List<StorageObject> listBucket(String bucketName)
-	      throws IOException, GeneralSecurityException {
-	    Storage client = StorageFactory.getService();
-	    Storage.Objects.List listRequest = client.objects().list(bucketName);
+                      throws IOException, GeneralSecurityException {
+                    Storage client = StorageFactory.getService();
+                    Storage.Objects.List listRequest = client.objects().list(bucketName);
 
-	    List<StorageObject> results = new ArrayList<StorageObject>();
-	    Objects objects;
+                    List<StorageObject> results = new ArrayList<StorageObject>();
+                    Objects objects;
 
-	    // Iterate through each page of results, and add them to our results list.
-	    do {
-	      objects = listRequest.execute();
-	      // Add the items in this page of results to the list we'll return.
-	      results.addAll(objects.getItems());
+                    // Iterate through each page of results, and add them to our results list.
+                    do {
+                      objects = listRequest.execute();
+                      // Add the items in this page of results to the list we'll return.
+                      results.addAll(objects.getItems());
 
-	      // Get the next page, in the next iteration of this loop.
-	      listRequest.setPageToken(objects.getNextPageToken());
-	    } while (null != objects.getNextPageToken());
+                      // Get the next page, in the next iteration of this loop.
+                      listRequest.setPageToken(objects.getNextPageToken());
+                    } while (null != objects.getNextPageToken());
 
-	    return results;
-	  }
+                    return results;
+                  }
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-	  
-	 /* List<StorageObject> bucketContents = null;
-	try {
-		bucketContents = listBucket(bucketName);
-	} catch (GeneralSecurityException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
-	  if (null == bucketContents) {
-	        System.out.println(
-	            "There were no objects in the given bucket; try adding some and re-running.");
-	      }*/
-	  //for (StorageObject object : bucketContents) {
-		  
-		//System.out.print(object.getName());  
-	  
+                  
+                 /* List<StorageObject> bucketContents = null;
+                try {
+                                bucketContents = listBucket(bucketName);
+                } catch (GeneralSecurityException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
+                }
+                  if (null == bucketContents) {
+                        System.out.println(
+                            "There were no objects in the given bucket; try adding some and re-running.");
+                      }*/
+                  //for (StorageObject object : bucketContents) {
+                                  
+                                //System.out.print(object.getName());  
+                  
     //[START original_image]
     // Read the image.jpg resource into a ByteBuffer.
-	  ServletContext context = getServletContext();
-	  //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
-	  ImagesService imagesService = ImagesServiceFactory.getImagesService();
-//	  GcsFilename gcsFilename = new GcsFilename(bucket, "image.jpg");
-//	  String filename = String.format("/gs/%s/%s", gcsFilename.getBucketName(), gcsFilename.getObjectName());
-//	  String servingUrl = imagesService.getServingUrl(ServingUrlOptions.Builder.withGoogleStorageFileName(filename).secureUrl(false));
-//	  
-//	//URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
-//	  //URL resource = context.getResource(imgPath + object.getName());
-//		File file = null;
+                  //ServletContext context = getServletContext();
+                  //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
+                                  
+                  
+                //URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
+                  //URL resource = context.getResource(imgPath + object.getName());
+//                                File file = null;
 //
-//		file = new File(servingUrl);
-//		//System.out.println(resource);
-//		System.out.println(servingUrl);
-//		System.out.println(file);
-//		
-//		
+//                                try {
+//                                                file = new File(resource.toURI());
+//                                } catch (URISyntaxException e) {
+//                                                // TODO Auto-generated catch block
+//                                                e.printStackTrace();
+//                                }
+//                                //System.out.println(resource);
+//                                System.out.println(file);
+//                                
+//                                
 //    FileInputStream fileInputStream = new FileInputStream(file);
 //    FileChannel fileChannel = fileInputStream.getChannel();
 //    ByteBuffer byteBuffer = ByteBuffer.allocate((int)fileChannel.size());
@@ -138,12 +136,12 @@ public class ImagesServlet extends HttpServlet {
 //        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 //        ByteBuffer.wrap(imageBytes));
 //    //[END original_image]
-//
-//    //[START resize]
-//    // Get an instance of the imagesService we can use to transform images.
-//    
-//
-//    // Make an image directly from a byte array, and transform it.
+
+    //[START resize]
+    // Get an instance of the imagesService we can use to transform images.
+    ImagesService imagesService = ImagesServiceFactory.getImagesService();
+
+    // Make an image directly from a byte array, and transform it.
 //    Image image = ImagesServiceFactory.makeImage(imageBytes);
 //    Transform resize = ImagesServiceFactory.makeResize(100, 50);
 //    Image resizedImage = imagesService.applyTransform(resize, image);
@@ -157,21 +155,16 @@ public class ImagesServlet extends HttpServlet {
 
     //[START rotate]
     // Make an image from a Cloud Storage object, and transform it.
-	  
-	  
-	  
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image.jpeg");
     Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
     //Transform rotate = ImagesServiceFactory.makeRotate(90);
-    
-    
-    Transform resize_125X75 = ImagesServiceFactory.makeResize(125,75);
-    Image rotatedImage = imagesService.applyTransform(resize_125X75, blobImage);
+    Transform resize = ImagesServiceFactory.makeResize(100, 50);
+    Image rotatedImage = imagesService.applyTransform(resize, blobImage);
 
     // Write the transformed image back to a Cloud Storage object.
     gcsService.createOrReplace(
-        new GcsFilename(destinationFolder, "resize_125X75.jpeg"),
+        new GcsFilename(bucket, "rotatedImage2.jpeg"),
         new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
         ByteBuffer.wrap(rotatedImage.getImageData()));
     //[END rotate]
@@ -187,8 +180,8 @@ public class ImagesServlet extends HttpServlet {
     out.println("<img src='//storage.cloud.google.com/" + bucket
         + "/rotatedImage.jpeg' alt='AppEngine logo rotated' />");
     out.println("</body></html>\n");
-	  //}
-	  //}
-	  }
+                  //}
+                  //}
+                  }
 }
 // [END example]
