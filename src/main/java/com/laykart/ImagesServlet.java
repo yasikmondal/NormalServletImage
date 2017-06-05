@@ -50,7 +50,11 @@ public class ImagesServlet  extends HttpServlet {
 	
 
 	  final String bucket = "laykart-165108.appspot.com";
-	final String destinationFolder = "laykart-165108.appspot.com/1xConvert";
+	final String destinationFolder1 = "laykart-165108.appspot.com/1xConvert";
+	final String destinationFolder1_5x = "laykart-165108.appspot.com/1_5xConvert";
+	final String destinationFolder2x = "laykart-165108.appspot.com/2xConvert";
+	final String destinationFolder3x = "laykart-165108.appspot.com/3xConvert";
+	final String destinationFolder4x = "laykart-165108.appspot.com/4xConvert";
 	  
 	  
 	  
@@ -87,7 +91,11 @@ public class ImagesServlet  extends HttpServlet {
 	  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		  
 
-	    	int[] sizes = {125,75,300,250,90,90,350,175};
+	    	int[] sizes1x = {125,75,300,250,90,90,350,175};
+		  int[] sizes1_5x = {188,113,450,375,135,135,525,265};
+		  int[] sizes2x = {250,150,600,500,180,180,700,350};
+		  int[] sizes3x = {375,225,900,750,270,270,1050,525};
+		  int[] sizes4x = {500,300,1200,1000,360,360,1400,700};
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
 
 
@@ -101,23 +109,93 @@ public class ImagesServlet  extends HttpServlet {
 	    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
 	    
 	    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
-		  for(int i=0; i< sizes.length; i++){
+		  for(int i=0; i< sizes1x.length; i++){
 	    	
-	    	int width =(Integer)sizes[i];
-            int height = (Integer)sizes[i+1];
+	    	int width =(Integer)sizes1x[i];
+            int height = (Integer)sizes1x[i+1];
             System.out.println(width + "X" + height);
             
             Transform resize_125x75 = ImagesServiceFactory.makeResize(width, height);
-    	    Image resizeImage = imagesService.applyTransform(resize_125x75, blobImage);
+    	    Image resizeImage1 = imagesService.applyTransform(resize_125x75, blobImage);
 
     	    // Write the transformed image back to a Cloud Storage object.
     	    gcsService.createOrReplace(
-    	        new GcsFilename(destinationFolder, "resizeImage"+width + "x" + height+ ".jpeg"),
+    	        new GcsFilename(destinationFolder1, "resizeImage_"+width + "x" + height+ ".jpeg"),
     	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-    	        ByteBuffer.wrap(resizeImage.getImageData()));
+    	        ByteBuffer.wrap(resizeImage1.getImageData()));
 
 	    	i++;
 	    }
+	    
+			for(int i=0; i< sizes1_5x.length; i++){
+				    	
+				    	int width =(Integer)sizes1_5x[i];
+			            int height = (Integer)sizes1_5x[i+1];
+			            System.out.println(width + "X" + height);
+			            
+			            Transform resize_1_5 = ImagesServiceFactory.makeResize(width, height);
+			    	    Image resizeImage1_5 = imagesService.applyTransform(resize_1_5, blobImage);
+			
+			    	    // Write the transformed image back to a Cloud Storage object.
+			    	    gcsService.createOrReplace(
+			    	        new GcsFilename(destinationFolder1_5x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+			    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+			    	        ByteBuffer.wrap(resizeImage1_5.getImageData()));
+			
+				    	i++;
+	    }
+			for(int i=0; i< sizes2x.length; i++){
+		    	
+		    	int width =(Integer)sizes2x[i];
+	            int height = (Integer)sizes2x[i+1];
+	            System.out.println(width + "X" + height);
+	            
+	            Transform resize2x = ImagesServiceFactory.makeResize(width, height);
+	    	    Image resizeImage2 = imagesService.applyTransform(resize2x, blobImage);
+	
+	    	    // Write the transformed image back to a Cloud Storage object.
+	    	    gcsService.createOrReplace(
+	    	        new GcsFilename(destinationFolder2x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+	    	        ByteBuffer.wrap(resizeImage2.getImageData()));
+	
+		    	i++;
+			}
+			
+				for(int i=0; i< sizes3x.length; i++){
+		    	
+		    	int width =(Integer)sizes3x[i];
+	            int height = (Integer)sizes3x[i+1];
+	            System.out.println(width + "X" + height);
+	            
+	            Transform resize3x = ImagesServiceFactory.makeResize(width, height);
+	    	    Image resizeImage3 = imagesService.applyTransform(resize3x, blobImage);
+	
+	    	    // Write the transformed image back to a Cloud Storage object.
+	    	    gcsService.createOrReplace(
+	    	        new GcsFilename(destinationFolder3x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+	    	        ByteBuffer.wrap(resizeImage3.getImageData()));
+	
+		    	i++;
+			}
+				for(int i=0; i< sizes4x.length; i++){
+			    	
+			    	int width =(Integer)sizes4x[i];
+		            int height = (Integer)sizes4x[i+1];
+		            System.out.println(width + "X" + height);
+		            
+		            Transform resize4x = ImagesServiceFactory.makeResize(width, height);
+		    	    Image resizeImage4 = imagesService.applyTransform(resize4x, blobImage);
+		
+		    	    // Write the transformed image back to a Cloud Storage object.
+		    	    gcsService.createOrReplace(
+		    	        new GcsFilename(destinationFolder4x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+		    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+		    	        ByteBuffer.wrap(resizeImage4.getImageData()));
+		
+			    	i++;
+				}
 		  
 		  
 		  
