@@ -50,6 +50,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 
 	  final String bucket = "laykart-165108.appspot.com";
+	final String destinationFolder = "laykart-165108.appspot.com/1xConvert";
 	  
 	  
 	  
@@ -154,7 +155,7 @@ public class ImagesServlet  extends HttpServlet {
 
 	    // Write the transformed image back to a Cloud Storage object.
 	    gcsService.createOrReplace(
-	        new GcsFilename(bucket, "rotatedImage.jpeg"),
+	        new GcsFilename(destinationFolder, "rotatedImage.jpeg"),
 	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	        ByteBuffer.wrap(rotatedImage.getImageData()));
 	    //[END rotate]
