@@ -99,21 +99,26 @@ public class ImagesServlet extends HttpServlet {
 	        System.out.println(
 	            "There were no objects in the given bucket; try adding some and re-running.");
 	      }
-	  for (StorageObject object : bucketContents) {
+	  //for (StorageObject object : bucketContents) {
 		  
-		System.out.print(object.getName());  
+		//System.out.print(object.getName());  
 	  
     //[START original_image]
     // Read the image.jpg resource into a ByteBuffer.
 	  ServletContext context = getServletContext();
-	  if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
+	  //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
 		  
 	  
-	//URL resource = context.getResource(object.getName());
+	URL resource = context.getResource("WEB-INF/image.jpg");
 	  //URL resource = context.getResource(imgPath + object.getName());
 		File file = null;
 
-		file = new File(object.getName());
+		try {
+			file = new File(resource.toURI());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//System.out.println(resource);
 		System.out.println(file);
 		
@@ -126,10 +131,10 @@ public class ImagesServlet extends HttpServlet {
     byte[] imageBytes = byteBuffer.array();
 
     // Write the original image to Cloud Storage
-    gcsService.createOrReplace(
+   /* gcsService.createOrReplace(
         new GcsFilename(bucket, "image.jpeg"),
         new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-        ByteBuffer.wrap(imageBytes));
+        ByteBuffer.wrap(imageBytes));*/
     //[END original_image]
 
     //[START resize]
@@ -174,8 +179,8 @@ public class ImagesServlet extends HttpServlet {
     out.println("<img src='//storage.cloud.google.com/" + bucket
         + "/rotatedImage.jpeg' alt='AppEngine logo rotated' />");
     out.println("</body></html>\n");
-	  }
-	  }
+	  //}
+	  //}
 	  }
 }
 // [END example]
