@@ -105,62 +105,61 @@ public class ImagesServlet extends HttpServlet {
                   
     //[START original_image]
     // Read the image.jpg resource into a ByteBuffer.
-                  //ServletContext context = getServletContext();
+                  ServletContext context = getServletContext();
                   //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
                                   
                   
-                //URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
-                  //URL resource = context.getResource(imgPath + object.getName());
-//                                File file = null;
-//
-//                                try {
-//                                                file = new File(resource.toURI());
-//                                } catch (URISyntaxException e) {
-//                                                // TODO Auto-generated catch block
-//                                                e.printStackTrace();
-//                                }
-//                                //System.out.println(resource);
-//                                System.out.println(file);
-//                                
-//                                
-//    FileInputStream fileInputStream = new FileInputStream(file);
-//    FileChannel fileChannel = fileInputStream.getChannel();
-//    ByteBuffer byteBuffer = ByteBuffer.allocate((int)fileChannel.size());
-//    fileChannel.read(byteBuffer);
-//
-//    byte[] imageBytes = byteBuffer.array();
-//
-//    // Write the original image to Cloud Storage
-//   gcsService.createOrReplace(
-//        new GcsFilename(bucket, "image.jpeg"),
-//        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-//        ByteBuffer.wrap(imageBytes));
-//    //[END original_image]
+                URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
+                  /*//URL resource = context.getResource(imgPath + object.getName());
+                                File file = null;
+
+                                try {
+                                                file = new File(resource.toURI());
+                                } catch (URISyntaxException e) {
+                                                // TODO Auto-generated catch block
+                                                e.printStackTrace();
+                                }
+                                //System.out.println(resource);
+                                System.out.println(file);
+                                
+                                
+    FileInputStream fileInputStream = new FileInputStream(file);
+    FileChannel fileChannel = fileInputStream.getChannel();
+    ByteBuffer byteBuffer = ByteBuffer.allocate((int)fileChannel.size());
+    fileChannel.read(byteBuffer);
+
+    byte[] imageBytes = byteBuffer.array();
+
+    // Write the original image to Cloud Storage
+   gcsService.createOrReplace(
+        new GcsFilename(bucket, "image.jpeg"),
+        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+        ByteBuffer.wrap(imageBytes));*/
+    //[END original_image]
 
     //[START resize]
     // Get an instance of the imagesService we can use to transform images.
     ImagesService imagesService = ImagesServiceFactory.getImagesService();
 
-    // Make an image directly from a byte array, and transform it.
-//    Image image = ImagesServiceFactory.makeImage(imageBytes);
-//    Transform resize = ImagesServiceFactory.makeResize(100, 50);
-//    Image resizedImage = imagesService.applyTransform(resize, image);
-//
-//    // Write the transformed image back to a Cloud Storage object.
-//    gcsService.createOrReplace(
-//        new GcsFilename(bucket, "resizedImage2.jpeg"),
-//        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-//        ByteBuffer.wrap(resizedImage.getImageData()));
-//    //[END resize]
+    /*// Make an image directly from a byte array, and transform it.
+    Image image = ImagesServiceFactory.makeImage(imageBytes);
+    Transform resize = ImagesServiceFactory.makeResize(100, 50);
+    Image resizedImage = imagesService.applyTransform(resize, image);
+
+    // Write the transformed image back to a Cloud Storage object.
+    gcsService.createOrReplace(
+        new GcsFilename(bucket, "resizedImage2.jpeg"),
+        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+        ByteBuffer.wrap(resizedImage.getImageData()));*/
+    //[END resize]
 
     //[START rotate]
     // Make an image from a Cloud Storage object, and transform it.
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image.jpeg");
+    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image2.jpeg");
     Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
-    //Transform rotate = ImagesServiceFactory.makeRotate(90);
-    Transform resize = ImagesServiceFactory.makeResize(100, 50);
-    Image rotatedImage = imagesService.applyTransform(resize, blobImage);
+    Transform rotate = ImagesServiceFactory.makeRotate(90);
+    Image rotatedImage = imagesService.applyTransform(rotate, blobImage);
 
     // Write the transformed image back to a Cloud Storage object.
     gcsService.createOrReplace(
