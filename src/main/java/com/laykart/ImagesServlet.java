@@ -105,11 +105,11 @@ public class ImagesServlet extends HttpServlet {
                   
     //[START original_image]
     // Read the image.jpg resource into a ByteBuffer.
-                  ServletContext context = getServletContext();
+                  //ServletContext context = getServletContext();
                   //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
                                   
                   
-                URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
+                //URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
                   /*//URL resource = context.getResource(imgPath + object.getName());
                                 File file = null;
 
