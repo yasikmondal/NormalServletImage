@@ -164,10 +164,13 @@ public class ImagesServlet extends HttpServlet {
     Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
     //Transform rotate = ImagesServiceFactory.makeRotate(90);
     
-	  for(int i=0; i< (sizes.length/2); i++){
-		    
-		    //Transform resize = ImagesServiceFactory.makeResize(sizes[i],sizes[i+1]);
-		  Transform resize = ImagesServiceFactory.makeResize((Integer)sizes[i], (Integer)sizes[i+1]);
+	  for(int i=0; i< sizes.length; i++){
+		  
+		  	int width =(Integer)sizes[i];
+		  	int height = (Integer)sizes[i+1];
+		  	System.out.println(width + "X" + height);
+		  
+		    Transform resize = ImagesServiceFactory.makeResize(width, height);
 		    Image rotatedImage = imagesService.applyTransform(resize, blobImage);
 
 		    // Write the transformed image back to a Cloud Storage object.
@@ -175,6 +178,7 @@ public class ImagesServlet extends HttpServlet {
 		        new GcsFilename(destinationFolder, "resize_"+sizes[i]+"X"+sizes[i+1]+".jpeg"),
 		        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 		        ByteBuffer.wrap(rotatedImage.getImageData()));
+		    i++;
 	  }
 
     //[END rotate]
