@@ -87,7 +87,7 @@ public class ImagesServlet  extends HttpServlet {
 	  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		  
 
-	    
+	    	int[] sizes = {125,75,300,250,90,90,350,175};
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
 
 
@@ -101,14 +101,35 @@ public class ImagesServlet  extends HttpServlet {
 	    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
 	    
 	    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
-	    Transform resize_125x75 = ImagesServiceFactory.makeResize(125, 75);
-	    Image resizeImage_125x75 = imagesService.applyTransform(resize_125x75, blobImage);
+		  for(int i=0; i< sizes.length; i++){
+	    	
+	    	int width =(Integer)sizes[i];
+            int height = (Integer)sizes[i+1];
+            System.out.println(width + "X" + height);
+            
+            Transform resize_125x75 = ImagesServiceFactory.makeResize(width, height);
+    	    Image resizeImage = imagesService.applyTransform(resize_125x75, blobImage);
 
-	    // Write the transformed image back to a Cloud Storage object.
-	    gcsService.createOrReplace(
-	        new GcsFilename(destinationFolder, "resizeImage_125x75.jpeg"),
-	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-	        ByteBuffer.wrap(resizeImage_125x75.getImageData()));
+    	    // Write the transformed image back to a Cloud Storage object.
+    	    gcsService.createOrReplace(
+    	        new GcsFilename(destinationFolder, "resizeImage"+width + "x" + height+ ".jpeg"),
+    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+    	        ByteBuffer.wrap(resizeImage.getImageData()));
+
+	    	i++;
+	    }
+		  
+		  
+		  
+		  
+// 	    Transform resize_125x75 = ImagesServiceFactory.makeResize(125, 75);
+// 	    Image resizeImage_125x75 = imagesService.applyTransform(resize_125x75, blobImage);
+
+// 	    // Write the transformed image back to a Cloud Storage object.
+// 	    gcsService.createOrReplace(
+// 	        new GcsFilename(destinationFolder, "resizeImage_125x75.jpeg"),
+// 	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+// 	        ByteBuffer.wrap(resizeImage_125x75.getImageData()));
 	    //[END rotate]
 	    System.out.println("Test4");
 	    // Output some simple HTML to display the images we wrote to Cloud Storage
