@@ -166,7 +166,7 @@ public class ImagesServlet extends HttpServlet {
 
     // Write the transformed image back to a Cloud Storage object.
     gcsService.createOrReplace(
-        new GcsFilename(bucket, "rotatedImage2.jpeg"),
+        new GcsFilename(destinationFolder, "rotatedImage2.jpeg"),
         new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
         ByteBuffer.wrap(rotatedImage.getImageData()));
     //[END rotate]
