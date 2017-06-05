@@ -109,7 +109,7 @@ public class ImagesServlet extends HttpServlet {
 	  //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
 		  
 	  
-	URL resource = context.getResource("WEB-INF/image.jpg");
+	URL resource = context.getResource("WEB-INF/image.jpeg");
 	  //URL resource = context.getResource(imgPath + object.getName());
 		File file = null;
 
