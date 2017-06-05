@@ -166,7 +166,8 @@ public class ImagesServlet extends HttpServlet {
     
 	  for(int i=0; i< (sizes.length/2); i++){
 		    
-		    Transform resize = ImagesServiceFactory.makeResize(sizes[i],sizes[i+1]);
+		    //Transform resize = ImagesServiceFactory.makeResize(sizes[i],sizes[i+1]);
+		  Transform resize = ImagesServiceFactory.makeResize((Integer)sizes[i], (Integer)sizes[i+1]);
 		    Image rotatedImage = imagesService.applyTransform(resize, blobImage);
 
 		    // Write the transformed image back to a Cloud Storage object.
