@@ -157,30 +157,22 @@ public class ImagesServlet extends HttpServlet {
 
     //[START rotate]
     // Make an image from a Cloud Storage object, and transform it.
-     int[] sizes = {125,75,300,250,90,90,350,175};
+     //int[] sizes = {125,75,300,250,90,90,350,175};
 	 	  
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+   BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image.jpeg");
     Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
     //Transform rotate = ImagesServiceFactory.makeRotate(90);
     
-	  //for(int i=0; i< sizes.length; i++){
-		  
-		  	//int width =(Integer)sizes[i];
-		  	//int height = (Integer)sizes[i+1];
-		  	//System.out.println(width + "X" + height);
-		  
-		    Transform resize = ImagesServiceFactory.makeResize(150, 75);
-		    Image rotatedImage = imagesService.applyTransform(resize, blobImage);
+    
+    Transform resize_125X75 = ImagesServiceFactory.makeResize(125,75);
+    Image rotatedImage = imagesService.applyTransform(resize_125X75, blobImage);
 
-		    // Write the transformed image back to a Cloud Storage object.
-		    gcsService.createOrReplace(
-		        new GcsFilename(destinationFolder, "resize_.jpeg"),
-		        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-		        ByteBuffer.wrap(rotatedImage.getImageData()));
-		    //i++;
-	  //}
-
+    // Write the transformed image back to a Cloud Storage object.
+    gcsService.createOrReplace(
+        new GcsFilename(destinationFolder, "resize_125X75.jpeg"),
+        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+        ByteBuffer.wrap(rotatedImage.getImageData()));
     //[END rotate]
 
     // Output some simple HTML to display the images we wrote to Cloud Storage
