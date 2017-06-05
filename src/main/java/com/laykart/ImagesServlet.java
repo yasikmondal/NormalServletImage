@@ -24,6 +24,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
@@ -107,18 +108,16 @@ public class ImagesServlet extends HttpServlet {
     // Read the image.jpg resource into a ByteBuffer.
 	  ServletContext context = getServletContext();
 	  //if("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png".equals(object.getName())){
-		  
+	  ImagesService imagesService = ImagesServiceFactory.getImagesService();
+	  GcsFilename gcsFilename = new GcsFilename(bucket, "image.jpg");
+	  String filename = String.format("/gs/%s/%s", gcsFilename.getBucketName(), gcsFilename.getObjectName());
+	  String servingUrl = imagesService.getServingUrl(ServingUrlOptions.Builder.withGoogleStorageFileName(filename).secureUrl(true));
 	  
-	URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
+	//URL resource = context.getResource("https://storage.googleapis.com/laykart-165108.appspot.com/leyKart-images/B1/G1.png");
 	  //URL resource = context.getResource(imgPath + object.getName());
 		File file = null;
 
-		try {
-			file = new File(resource.toURI());
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		file = new File(servingUrl);
 		//System.out.println(resource);
 		System.out.println(file);
 		
@@ -139,7 +138,7 @@ public class ImagesServlet extends HttpServlet {
 
     //[START resize]
     // Get an instance of the imagesService we can use to transform images.
-    ImagesService imagesService = ImagesServiceFactory.getImagesService();
+    
 
     // Make an image directly from a byte array, and transform it.
     Image image = ImagesServiceFactory.makeImage(imageBytes);
