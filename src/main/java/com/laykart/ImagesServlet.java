@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class ImagesServlet extends HttpServlet {
   final String bucket = "laykart-165108.appspot.com";
-  String bucketName = "laykart-165108.appspot.com";
+  String bucketName = "laykart-165108.appspot.com/leyKart-images";
   String destinationFolder = "laykart-165108.appspot.com/1xConvert";
 
   // [START gcs]
@@ -157,9 +157,10 @@ public class ImagesServlet extends HttpServlet {
 
     //[START rotate]
     // Make an image from a Cloud Storage object, and transform it.
-     //int[] sizes = {125,75,300,250,90,90,350,175};
-	 	  
-   BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+	  
+	  
+	  
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image.jpeg");
     Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
     //Transform rotate = ImagesServiceFactory.makeRotate(90);
