@@ -88,7 +88,7 @@ public class ImagesServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 	  
-	  List<StorageObject> bucketContents = null;
+	 /* List<StorageObject> bucketContents = null;
 	try {
 		bucketContents = listBucket(bucketName);
 	} catch (GeneralSecurityException e1) {
@@ -98,7 +98,7 @@ public class ImagesServlet extends HttpServlet {
 	  if (null == bucketContents) {
 	        System.out.println(
 	            "There were no objects in the given bucket; try adding some and re-running.");
-	      }
+	      }*/
 	  //for (StorageObject object : bucketContents) {
 		  
 		//System.out.print(object.getName());  
@@ -131,10 +131,10 @@ public class ImagesServlet extends HttpServlet {
     byte[] imageBytes = byteBuffer.array();
 
     // Write the original image to Cloud Storage
-   /* gcsService.createOrReplace(
+   gcsService.createOrReplace(
         new GcsFilename(bucket, "image.jpeg"),
         new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-        ByteBuffer.wrap(imageBytes));*/
+        ByteBuffer.wrap(imageBytes));
     //[END original_image]
 
     //[START resize]
