@@ -87,7 +87,7 @@ public class ImagesServlet  extends HttpServlet {
 	  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		  
 
-*/	    
+	    
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
 
 
