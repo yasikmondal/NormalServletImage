@@ -60,35 +60,35 @@ import com.google.appengine.tools.cloudstorage.RetryParams;
 public class ImagesServlet  extends HttpServlet {
 	
 
-	 final String bucket = "staging.laykart-165108.appspot.com";
+	 final String bucket = "leykart-images";
 	final String destinationFolder1 = "laykart-165108.appspot.com/1xConvert";
 	final String destinationFolder1_5x = "laykart-165108.appspot.com/1_5xConvert";
 	final String destinationFolder2x = "laykart-165108.appspot.com/2xConvert";
 	final String destinationFolder3x = "laykart-165108.appspot.com/3xConvert";
 	final String destinationFolder4x = "laykart-165108.appspot.com/4xConvert";
-	String thumbnailDestinationFolder []= {"laykart-165108.appspot.com/Thumbnail/1x" ,
-					 						"laykart-165108.appspot.com/Thumbnail/1_5x",
-					 						"laykart-165108.appspot.com/Thumbnail/2x" ,
-					 						"laykart-165108.appspot.com/Thumbnail/3x",
-					 						"laykart-165108.appspot.com/Thumbnail/4x"
+	String thumbnailDestinationFolder []= {"leykart-resized-images/Thumbnail/1x" ,
+					 						"leykart-resized-images/Thumbnail/1_5x",
+					 						"leykart-resized-images/Thumbnail/2x" ,
+					 						"leykart-resized-images/Thumbnail/3x",
+					 						"leykart-resized-images/Thumbnail/4x"
 			 								};
-	String productDetailDestinationFolder []= {"laykart-165108.appspot.com/Product_Detail/1x" ,
-											"laykart-165108.appspot.com/Product_Detail/1_5x",
-											"laykart-165108.appspot.com/Product_Detail/2x" ,
-											"laykart-165108.appspot.com/Product_Detail/3x",
-											"laykart-165108.appspot.com/Product_Detail/4x"
+	String productDetailDestinationFolder []= {"leykart-resized-images/ProductDetails/1x" ,
+											"leykart-resized-images/ProductDetails/1_5x",
+											"leykart-resized-images/ProductDetails/2x" ,
+											"leykart-resized-images/ProductDetails/3x",
+											"leykart-resized-images/ProductDetails/4x"
 											};
-	String productSmallDestinationFolder []= {"laykart-165108.appspot.com/Product_small/1x" ,
-											"laykart-165108.appspot.com/Product_small/1_5x",
-											"laykart-165108.appspot.com/Product_small/2x" ,
-											"laykart-165108.appspot.com/Product_small/3x",
-											"laykart-165108.appspot.com/Product_small/4x"
+	String productSmallDestinationFolder []= {"leykart-resized-images/ProductSmall/1x" ,
+											"leykart-resized-images/ProductSmall/1_5x",
+											"leykart-resized-images/ProductSmall/2x" ,
+											"leykart-resized-images/ProductSmall/3x",
+											"leykart-resized-images/ProductSmall/4x"
 											};
-	String bannerDestinationFolder []= {"laykart-165108.appspot.com/Banner/1x" ,
-											"laykart-165108.appspot.com/Banner/1_5x",
-											"laykart-165108.appspot.com/Banner/2x" ,
-											"laykart-165108.appspot.com/Banner/3x",
-											"laykart-165108.appspot.com/Banner/4x"
+	String bannerDestinationFolder []= {"leykart-resized-images/Banner/1x" ,
+											"leykart-resized-images/Banner/1_5x",
+											"leykart-resized-images/Banner/2x" ,
+											"leykart-resized-images/Banner/3x",
+											"leykart-resized-images/Banner/4x"
 											};
 	  
 	  
