@@ -177,9 +177,11 @@ public class ImagesServlet  extends HttpServlet {
 				
 				String objectName = object.getName();
 			if(objectName.endsWith(".png") || objectName.endsWith(".jpg")){
-				objectName = objectName.substring(7, (objectName.length()-5));
+				objectName = objectName.substring(7, (objectName.length()-4));
+				System.out.println(objectName);
 			}else if(objectName.endsWith(".jpeg")){
-				objectName = objectName.substring(7, (objectName.length()-6));
+				objectName = objectName.substring(7, (objectName.length()-5));
+				System.out.println(objectName);
 			}
 				
 				if ("image/png".equals(object.getContentType())) {
