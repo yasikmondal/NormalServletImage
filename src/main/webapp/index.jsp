@@ -31,14 +31,12 @@
      <tr>
       <td colspan="2" style="font-weight:bold;">IMAGES PROCESSING SERVLET:</td>
     </tr>
+     
     <tr>
-      <td><a href='/hello'>The servlet</a></td>
-    </tr> 
-    <tr>
-      <td><a href='/image'>IMAGES PROCESSING</a></td>
+      <td><a href='/image'>Click me to convert</a></td>
     </tr>
     <tr>
-    <td>
+    <!-- <td>
     <form method="POST" action="/image" enctype="multipart/form-data">
 
     <div class="form-group hidden">
@@ -48,7 +46,7 @@
 
     <button type="submit" class="btn btn-success">Save</button>
   </form>
-  </td>
+  </td> -->
     </tr> 
     
     
