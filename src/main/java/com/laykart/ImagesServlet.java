@@ -1,3 +1,4 @@
+
 /**
 * Copyright 2015 Google Inc.
 *
@@ -23,6 +24,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -31,7 +36,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import com.google.api.client.http.InputStreamContent;
+import com.google.api.services.storage.Storage;
+import com.google.api.services.storage.model.ObjectAccessControl;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -49,13 +57,36 @@ import com.google.appengine.tools.cloudstorage.RetryParams;
 public class ImagesServlet  extends HttpServlet {
 	
 
-	  final String bucket = "laykart-165108.appspot.com";
+	 final String bucket = "laykart-165108.appspot.com";
 	final String destinationFolder1 = "laykart-165108.appspot.com/1xConvert";
 	final String destinationFolder1_5x = "laykart-165108.appspot.com/1_5xConvert";
 	final String destinationFolder2x = "laykart-165108.appspot.com/2xConvert";
 	final String destinationFolder3x = "laykart-165108.appspot.com/3xConvert";
 	final String destinationFolder4x = "laykart-165108.appspot.com/4xConvert";
-	  
+	String thumbnailDestinationFolder []= {"laykart-165108.appspot.com/Thumbnail/1x/" ,
+					 						"laykart-165108.appspot.com/Thumbnail/1_5x/",
+					 						"laykart-165108.appspot.com/Thumbnail/2x/" ,
+					 						"laykart-165108.appspot.com/Thumbnail/3x/",
+					 						"laykart-165108.appspot.com/Thumbnail/4x/"
+			 								};
+	String productDetailDestinationFolder []= {"laykart-165108.appspot.com/Product_Detail/1x/" ,
+											"laykart-165108.appspot.com/Product_Detail/1_5x/",
+											"laykart-165108.appspot.com/Product_Detail/2x/" ,
+											"laykart-165108.appspot.com/Product_Detail/3x/",
+											"laykart-165108.appspot.com/Product_Detail/4x/"
+											};
+	String productSmallDestinationFolder []= {"laykart-165108.appspot.com/Product_small/1x/" ,
+											"laykart-165108.appspot.com/Product_small/1_5x/",
+											"laykart-165108.appspot.com/Product_small/2x/" ,
+											"laykart-165108.appspot.com/Product_small/3x/",
+											"laykart-165108.appspot.com/Product_small/4x/"
+											};
+	String bannerDestinationFolder []= {"laykart-165108.appspot.com/Banner/1x/" ,
+											"laykart-165108.appspot.com/Banner/1_5x/",
+											"laykart-165108.appspot.com/Banner/2x/" ,
+											"laykart-165108.appspot.com/Banner/3x/",
+											"laykart-165108.appspot.com/Banner/4x/"
+											};
 	  
 	  
 
@@ -85,20 +116,37 @@ public class ImagesServlet  extends HttpServlet {
 			  System.out.println(newImageUrl);
 			  
 	  }*/
+	  
+	 
 
 	  @SuppressWarnings("resource")
 	@Override
 	  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		  
 
-	    	int[] sizes1x = {125,75,300,250,90,90,350,175};
+		  int[] sizes1x = {125,75,300,250,90,90,350,175};
+		  
 		  int[] sizes1_5x = {188,113,450,375,135,135,525,265};
 		  int[] sizes2x = {250,150,600,500,180,180,700,350};
 		  int[] sizes3x = {375,225,900,750,270,270,1050,525};
 		  int[] sizes4x = {500,300,1200,1000,360,360,1400,700};
+		  
+		  int [] thumbnail ={125,75,188,113,250,150,375,225,500,300 };
+		  int [] productDetail = {300,250,450,375,600,500,900,750,1200,1000};
+		  int [] productSmall = {90,90,135,135,180,180,270,270,360,360};
+		  int [] banner = {350,175,525,265,700,350,1050,525,1400,700};
+		  
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
+		  
 
-
+	      // Create a temp file to upload
+	     // Path tempPath = Files.createTempFile("StorageSample", "txt");
+	     // Files.write(tempPath, "Sample file".getBytes());
+	     // File tempFile = tempPath.toFile();
+	     // tempFile.deleteOnExit();
+	      
+		  //uploadFile(TEST_FILENAME, "image/png", tempFile, bucketName);
+		  
 	    //[START rotate]
 	    // Make an image from a Cloud Storage object, and transform it.
 	    
@@ -109,28 +157,35 @@ public class ImagesServlet  extends HttpServlet {
 	    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
 	    
 	    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
-		  for(int i=0; i< sizes1x.length; i++){
+	    
+	    
+	    // For Thumbnail
+	    
+	    for(int i=0, j=0; i< thumbnail.length; i++, j++){
 	    	
-	    	int width =(Integer)sizes1x[i];
-            int height = (Integer)sizes1x[i+1];
+	    	int width =(Integer)thumbnail[i];
+            int height = (Integer)thumbnail[i+1];
             System.out.println(width + "X" + height);
             
-            Transform resize_125x75 = ImagesServiceFactory.makeResize(width, height);
-    	    Image resizeImage1 = imagesService.applyTransform(resize_125x75, blobImage);
+            Transform resize1 = ImagesServiceFactory.makeResize(width, height);
+    	    Image resizeImage1 = imagesService.applyTransform(resize1, blobImage);
 
     	    // Write the transformed image back to a Cloud Storage object.
     	    gcsService.createOrReplace(
-    	        new GcsFilename(destinationFolder1, "resizeImage_"+width + "x" + height+ ".jpeg"),
+    	        new GcsFilename(thumbnailDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
     	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
     	        ByteBuffer.wrap(resizeImage1.getImageData()));
 
 	    	i++;
 	    }
 	    
-			for(int i=0; i< sizes1_5x.length; i++){
+	    
+	 // For productDetail
+	    
+			for(int i=0, j=0 ; i< productDetail.length; i++, j++){
 				    	
-				    	int width =(Integer)sizes1_5x[i];
-			            int height = (Integer)sizes1_5x[i+1];
+				    	int width =(Integer)productDetail[i];
+			            int height = (Integer)productDetail[i+1];
 			            System.out.println(width + "X" + height);
 			            
 			            Transform resize_1_5 = ImagesServiceFactory.makeResize(width, height);
@@ -138,16 +193,19 @@ public class ImagesServlet  extends HttpServlet {
 			
 			    	    // Write the transformed image back to a Cloud Storage object.
 			    	    gcsService.createOrReplace(
-			    	        new GcsFilename(destinationFolder1_5x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+			    	        new GcsFilename(productDetailDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
 			    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 			    	        ByteBuffer.wrap(resizeImage1_5.getImageData()));
 			
 				    	i++;
 	    }
-			for(int i=0; i< sizes2x.length; i++){
+			
+	// For productSmall
+			
+			for(int i=0, j=0; i< productSmall.length; i++, j++){
 		    	
-		    	int width =(Integer)sizes2x[i];
-	            int height = (Integer)sizes2x[i+1];
+		    	int width =(Integer)productSmall[i];
+	            int height = (Integer)productSmall[i+1];
 	            System.out.println(width + "X" + height);
 	            
 	            Transform resize2x = ImagesServiceFactory.makeResize(width, height);
@@ -155,17 +213,20 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(destinationFolder2x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(productSmallDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage2.getImageData()));
 	
 		    	i++;
 			}
 			
-				for(int i=0; i< sizes3x.length; i++){
+			
+	//For banner	
+			
+				for(int i=0, j=0; i< banner.length; i++, j++){
 		    	
-		    	int width =(Integer)sizes3x[i];
-	            int height = (Integer)sizes3x[i+1];
+		    	int width =(Integer)banner[i];
+	            int height = (Integer)banner[i+1];
 	            System.out.println(width + "X" + height);
 	            
 	            Transform resize3x = ImagesServiceFactory.makeResize(width, height);
@@ -173,13 +234,13 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(destinationFolder3x, "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(bannerDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage3.getImageData()));
 	
 		    	i++;
 			}
-				for(int i=0; i< sizes4x.length; i++){
+				/*for(int i=0; i< sizes4x.length; i++){
 			    	
 			    	int width =(Integer)sizes4x[i];
 		            int height = (Integer)sizes4x[i+1];
@@ -195,32 +256,18 @@ public class ImagesServlet  extends HttpServlet {
 		    	        ByteBuffer.wrap(resizeImage4.getImageData()));
 		
 			    	i++;
-				}
-		  
-		  
-		  
-		  
-// 	    Transform resize_125x75 = ImagesServiceFactory.makeResize(125, 75);
-// 	    Image resizeImage_125x75 = imagesService.applyTransform(resize_125x75, blobImage);
-
-// 	    // Write the transformed image back to a Cloud Storage object.
-// 	    gcsService.createOrReplace(
-// 	        new GcsFilename(destinationFolder, "resizeImage_125x75.jpeg"),
-// 	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-// 	        ByteBuffer.wrap(resizeImage_125x75.getImageData()));
+				}*/
+	    
 	    //[END rotate]
 	    System.out.println("Test4");
 	    // Output some simple HTML to display the images we wrote to Cloud Storage
 	    // in the browser.
 	    PrintWriter out = resp.getWriter();
 	    out.println("<html><body>\n");
+	    out.println("Converted Successfully !! Please check in cloud storage");
 	    out.println("<img src='https://storage.googleapis.com/" + bucket
-	        + "/image.jpeg' alt='AppEngine logo' />");
-	    out.println("<img src='https://storage.googleapis.com/" + bucket
-	        + "/resizedImage.jpeg' alt='AppEngine logo resized' />");
-	    out.println("<img src='https://storage.googleapis.com/" + bucket
-	        + "/rotatedImage.jpeg' alt='AppEngine logo rotated' />");
-	    out.println("</body></html>\n");
+	        + "/image.jpg' alt='AppEngine logo' />");
+	    
 	  }
 
 
