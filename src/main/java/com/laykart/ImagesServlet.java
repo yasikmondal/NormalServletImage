@@ -57,35 +57,35 @@ import com.google.appengine.tools.cloudstorage.RetryParams;
 public class ImagesServlet  extends HttpServlet {
 	
 
-	 final String bucket = "laykart-165108.appspot.com";
+	 final String bucket = "staging.laykart-165108.appspot.com";
 	final String destinationFolder1 = "laykart-165108.appspot.com/1xConvert";
 	final String destinationFolder1_5x = "laykart-165108.appspot.com/1_5xConvert";
 	final String destinationFolder2x = "laykart-165108.appspot.com/2xConvert";
 	final String destinationFolder3x = "laykart-165108.appspot.com/3xConvert";
 	final String destinationFolder4x = "laykart-165108.appspot.com/4xConvert";
-	String thumbnailDestinationFolder []= {"laykart-165108.appspot.com/Thumbnail/1x/" ,
-					 						"laykart-165108.appspot.com/Thumbnail/1_5x/",
-					 						"laykart-165108.appspot.com/Thumbnail/2x/" ,
-					 						"laykart-165108.appspot.com/Thumbnail/3x/",
-					 						"laykart-165108.appspot.com/Thumbnail/4x/"
+	String thumbnailDestinationFolder []= {"laykart-165108.appspot.com/Thumbnail/1x" ,
+					 						"laykart-165108.appspot.com/Thumbnail/1_5x",
+					 						"laykart-165108.appspot.com/Thumbnail/2x" ,
+					 						"laykart-165108.appspot.com/Thumbnail/3x",
+					 						"laykart-165108.appspot.com/Thumbnail/4x"
 			 								};
-	String productDetailDestinationFolder []= {"laykart-165108.appspot.com/Product_Detail/1x/" ,
-											"laykart-165108.appspot.com/Product_Detail/1_5x/",
-											"laykart-165108.appspot.com/Product_Detail/2x/" ,
-											"laykart-165108.appspot.com/Product_Detail/3x/",
-											"laykart-165108.appspot.com/Product_Detail/4x/"
+	String productDetailDestinationFolder []= {"laykart-165108.appspot.com/Product_Detail/1x" ,
+											"laykart-165108.appspot.com/Product_Detail/1_5x",
+											"laykart-165108.appspot.com/Product_Detail/2x" ,
+											"laykart-165108.appspot.com/Product_Detail/3x",
+											"laykart-165108.appspot.com/Product_Detail/4x"
 											};
-	String productSmallDestinationFolder []= {"laykart-165108.appspot.com/Product_small/1x/" ,
-											"laykart-165108.appspot.com/Product_small/1_5x/",
-											"laykart-165108.appspot.com/Product_small/2x/" ,
-											"laykart-165108.appspot.com/Product_small/3x/",
-											"laykart-165108.appspot.com/Product_small/4x/"
+	String productSmallDestinationFolder []= {"laykart-165108.appspot.com/Product_small/1x" ,
+											"laykart-165108.appspot.com/Product_small/1_5x",
+											"laykart-165108.appspot.com/Product_small/2x" ,
+											"laykart-165108.appspot.com/Product_small/3x",
+											"laykart-165108.appspot.com/Product_small/4x"
 											};
-	String bannerDestinationFolder []= {"laykart-165108.appspot.com/Banner/1x/" ,
-											"laykart-165108.appspot.com/Banner/1_5x/",
-											"laykart-165108.appspot.com/Banner/2x/" ,
-											"laykart-165108.appspot.com/Banner/3x/",
-											"laykart-165108.appspot.com/Banner/4x/"
+	String bannerDestinationFolder []= {"laykart-165108.appspot.com/Banner/1x" ,
+											"laykart-165108.appspot.com/Banner/1_5x",
+											"laykart-165108.appspot.com/Banner/2x" ,
+											"laykart-165108.appspot.com/Banner/3x",
+											"laykart-165108.appspot.com/Banner/4x"
 											};
 	  
 	  
@@ -153,7 +153,7 @@ public class ImagesServlet  extends HttpServlet {
 	    //BlobstoreService allows you to manage the creation and serving of large, immutable blobs to users. 
 	    System.out.println("Test3");
 	    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-	    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/image.jpg"); // Creating a BlobKey for a Google Storage File.
+	    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/images/SKU1_1.png"); // Creating a BlobKey for a Google Storage File.
 	    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
 	    
 	    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
@@ -172,7 +172,7 @@ public class ImagesServlet  extends HttpServlet {
 
     	    // Write the transformed image back to a Cloud Storage object.
     	    gcsService.createOrReplace(
-    	        new GcsFilename(thumbnailDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
+    	        new GcsFilename(thumbnailDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
     	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
     	        ByteBuffer.wrap(resizeImage1.getImageData()));
 
@@ -193,7 +193,7 @@ public class ImagesServlet  extends HttpServlet {
 			
 			    	    // Write the transformed image back to a Cloud Storage object.
 			    	    gcsService.createOrReplace(
-			    	        new GcsFilename(productDetailDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
+			    	        new GcsFilename(productDetailDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
 			    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 			    	        ByteBuffer.wrap(resizeImage1_5.getImageData()));
 			
@@ -213,7 +213,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(productSmallDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(productSmallDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage2.getImageData()));
 	
@@ -234,7 +234,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(bannerDestinationFolder[j], "resizeImage_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(bannerDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage3.getImageData()));
 	
