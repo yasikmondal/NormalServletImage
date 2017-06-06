@@ -300,17 +300,21 @@ public class ImagesServlet  extends HttpServlet {
 			    	i++;
 				}*/
 	    
-	    //[END rotate]
+	    
+	    
+	    
+			}
+			}
+		  
+		  // close for loop
+			
+		//[END rotate]
 	    System.out.println("Test4");
 	    // Output some simple HTML to display the images we wrote to Cloud Storage
 	    // in the browser.
 	    PrintWriter out = resp.getWriter();
 	    out.println("<html><body>\n");
 	    out.println("Converted Successfully !! Please check in cloud storage");
-	    
-	    
-			}
-			}
 		}
 
 
