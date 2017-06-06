@@ -97,9 +97,9 @@ public class ImagesServlet  extends HttpServlet {
 	  
 	  //Allows creating and accessing files in Google Cloud Storage.
 	  private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
-	      .initialRetryDelayMillis(10)
-	      .retryMaxAttempts(10)
-	      .totalRetryPeriodMillis(15000)
+	      .initialRetryDelayMillis(50)
+	      .retryMaxAttempts(50)
+	      .totalRetryPeriodMillis(150000)
 	      .build());
 	  // [END gcs]
 	  
