@@ -27,7 +27,9 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -39,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.ObjectAccessControl;
+import com.google.api.services.storage.model.Objects;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -117,6 +120,27 @@ public class ImagesServlet  extends HttpServlet {
 			  
 	  }*/
 	  
+	  public static List<StorageObject> listBucket(String bucketName) throws IOException, GeneralSecurityException {
+			Storage client = StorageFactory.getService();
+			Storage.Objects.List listRequest = client.objects().list(bucketName);
+
+			List<StorageObject> results = new ArrayList<StorageObject>();
+			Objects objects;
+
+			// Iterate through each page of results, and add them to our results
+			// list.
+			do {
+				objects = listRequest.execute();
+				// Add the items in this page of results to the list we'll return.
+				results.addAll(objects.getItems());
+
+				// Get the next page, in the next iteration of this loop.
+				listRequest.setPageToken(objects.getNextPageToken());
+			} while (null != objects.getNextPageToken());
+
+			return results;
+		}
+	  
 	 
 
 	  @SuppressWarnings("resource")
@@ -135,10 +159,28 @@ public class ImagesServlet  extends HttpServlet {
 		  int [] productDetail = {300,250,450,375,600,500,900,750,1200,1000};
 		  int [] productSmall = {90,90,135,135,180,180,270,270,360,360};
 		  int [] banner = {350,175,525,265,700,350,1050,525,1400,700};
+		  List<StorageObject> bucketContents = null;
+		  try {
+			bucketContents = listBucket(bucket);
+		} catch (GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		  
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
 		  
+		  if (null == bucketContents) {
+				System.out.println("There were no objects in the given bucket; try adding some and re-running.");
+			}
 
+			for (StorageObject object : bucketContents) {
+				
+				if ("image/png".equals(object.getContentType())) {
+					
+					
+				
+				
+			
 	      // Create a temp file to upload
 	     // Path tempPath = Files.createTempFile("StorageSample", "txt");
 	     // Files.write(tempPath, "Sample file".getBytes());
@@ -153,7 +195,7 @@ public class ImagesServlet  extends HttpServlet {
 	    //BlobstoreService allows you to manage the creation and serving of large, immutable blobs to users. 
 	    System.out.println("Test3");
 	    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-	    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/images/SKU1_1.png"); // Creating a BlobKey for a Google Storage File.
+	    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/" + object.getName()); // Creating a BlobKey for a Google Storage File.
 	    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
 	    
 	    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
@@ -172,7 +214,7 @@ public class ImagesServlet  extends HttpServlet {
 
     	    // Write the transformed image back to a Cloud Storage object.
     	    gcsService.createOrReplace(
-    	        new GcsFilename(thumbnailDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
+    	        new GcsFilename(thumbnailDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
     	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
     	        ByteBuffer.wrap(resizeImage1.getImageData()));
 
@@ -193,7 +235,7 @@ public class ImagesServlet  extends HttpServlet {
 			
 			    	    // Write the transformed image back to a Cloud Storage object.
 			    	    gcsService.createOrReplace(
-			    	        new GcsFilename(productDetailDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
+			    	        new GcsFilename(productDetailDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
 			    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 			    	        ByteBuffer.wrap(resizeImage1_5.getImageData()));
 			
@@ -213,7 +255,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(productSmallDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(productSmallDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage2.getImageData()));
 	
@@ -234,7 +276,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(bannerDestinationFolder[j], "SKU1_1_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(bannerDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage3.getImageData()));
 	
@@ -265,10 +307,11 @@ public class ImagesServlet  extends HttpServlet {
 	    PrintWriter out = resp.getWriter();
 	    out.println("<html><body>\n");
 	    out.println("Converted Successfully !! Please check in cloud storage");
-	    out.println("<img src='https://storage.googleapis.com/" + bucket
-	        + "/image.jpg' alt='AppEngine logo' />");
 	    
-	  }
+	    
+			}
+			}
+		}
 
 
 }
