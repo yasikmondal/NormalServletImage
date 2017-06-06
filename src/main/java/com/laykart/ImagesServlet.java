@@ -175,6 +175,13 @@ public class ImagesServlet  extends HttpServlet {
 
 			for (StorageObject object : bucketContents) {
 				
+				String objectName = object.getName();
+			if(objectName.endsWith(".png") || objectName.endsWith(".jpg")){
+				objectName = objectName.substring(6, (objectName.length()-5));
+			}else if(objectName.endsWith(".jpeg")){
+				objectName = objectName.substring(6, (objectName.length()-6));
+			}
+				
 				if ("image/png".equals(object.getContentType())) {
 					
 					
@@ -214,7 +221,7 @@ public class ImagesServlet  extends HttpServlet {
 
     	    // Write the transformed image back to a Cloud Storage object.
     	    gcsService.createOrReplace(
-    	        new GcsFilename(thumbnailDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
+    	        new GcsFilename(thumbnailDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
     	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
     	        ByteBuffer.wrap(resizeImage1.getImageData()));
 
@@ -235,7 +242,7 @@ public class ImagesServlet  extends HttpServlet {
 			
 			    	    // Write the transformed image back to a Cloud Storage object.
 			    	    gcsService.createOrReplace(
-			    	        new GcsFilename(productDetailDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
+			    	        new GcsFilename(productDetailDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
 			    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 			    	        ByteBuffer.wrap(resizeImage1_5.getImageData()));
 			
@@ -255,7 +262,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(productSmallDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(productSmallDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage2.getImageData()));
 	
@@ -276,7 +283,7 @@ public class ImagesServlet  extends HttpServlet {
 	
 	    	    // Write the transformed image back to a Cloud Storage object.
 	    	    gcsService.createOrReplace(
-	    	        new GcsFilename(bannerDestinationFolder[j], object.getName() + "_"+width + "x" + height+ ".jpeg"),
+	    	        new GcsFilename(bannerDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
 	    	        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 	    	        ByteBuffer.wrap(resizeImage3.getImageData()));
 	
