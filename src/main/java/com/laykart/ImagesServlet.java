@@ -18,7 +18,6 @@ package com.laykart;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
@@ -31,7 +30,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -62,11 +60,36 @@ import com.google.appengine.tools.cloudstorage.RetryParams;
 public class ImagesServlet  extends HttpServlet {
 	
 
-	 String bucket = null;
-	String thumbnailDestinationFolder[] = null;
-	String productDetailDestinationFolder [] = null;
-	String productSmallDestinationFolder [] = null;
-	String bannerDestinationFolder []= null;
+	 final String bucket = "staging.laykart-165108.appspot.com";
+	final String destinationFolder1 = "laykart-165108.appspot.com/1xConvert";
+	final String destinationFolder1_5x = "laykart-165108.appspot.com/1_5xConvert";
+	final String destinationFolder2x = "laykart-165108.appspot.com/2xConvert";
+	final String destinationFolder3x = "laykart-165108.appspot.com/3xConvert";
+	final String destinationFolder4x = "laykart-165108.appspot.com/4xConvert";
+	String thumbnailDestinationFolder []= {"laykart-165108.appspot.com/Thumbnail/1x" ,
+					 						"laykart-165108.appspot.com/Thumbnail/1_5x",
+					 						"laykart-165108.appspot.com/Thumbnail/2x" ,
+					 						"laykart-165108.appspot.com/Thumbnail/3x",
+					 						"laykart-165108.appspot.com/Thumbnail/4x"
+			 								};
+	String productDetailDestinationFolder []= {"laykart-165108.appspot.com/Product_Detail/1x" ,
+											"laykart-165108.appspot.com/Product_Detail/1_5x",
+											"laykart-165108.appspot.com/Product_Detail/2x" ,
+											"laykart-165108.appspot.com/Product_Detail/3x",
+											"laykart-165108.appspot.com/Product_Detail/4x"
+											};
+	String productSmallDestinationFolder []= {"laykart-165108.appspot.com/Product_small/1x" ,
+											"laykart-165108.appspot.com/Product_small/1_5x",
+											"laykart-165108.appspot.com/Product_small/2x" ,
+											"laykart-165108.appspot.com/Product_small/3x",
+											"laykart-165108.appspot.com/Product_small/4x"
+											};
+	String bannerDestinationFolder []= {"laykart-165108.appspot.com/Banner/1x" ,
+											"laykart-165108.appspot.com/Banner/1_5x",
+											"laykart-165108.appspot.com/Banner/2x" ,
+											"laykart-165108.appspot.com/Banner/3x",
+											"laykart-165108.appspot.com/Banner/4x"
+											};
 	  
 	  
 
@@ -124,57 +147,25 @@ public class ImagesServlet  extends HttpServlet {
 	@Override
 	  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		  
-		String [] thumbnail =null;
-		String [] productDetail = null;
-		String [] productSmall = null;
-		String [] banner = null;
-		
-		List<StorageObject> bucketContents = null;
-		try {
-			File file = new File("/WEB-INF/application.properties");
-			FileInputStream fileInput = new FileInputStream(file);
-			Properties properties = new Properties();
-			properties.load(fileInput);
-			
-			bucket = properties.getProperty("bucket");
-			
-			String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
-			thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
-			
-			String productDetailDestinationFolderString = properties.getProperty("productDetailDestinationFolder");
-			productDetailDestinationFolder = productDetailDestinationFolderString.split(",");
-			
-			String productSmallDestinationFolderString = properties.getProperty("productSmallDestinationFolder");
-			productSmallDestinationFolder = productSmallDestinationFolderString.split(",");
-			
-			String bannerDestinationFolderString = properties.getProperty("bannerDestinationFolder");
-			bannerDestinationFolder = bannerDestinationFolderString.split(",");
-			
-			
-			String thumbnailString = properties.getProperty("thumbnail");
-			thumbnail = thumbnailString.split(",");
-			
-			String productDetailString = properties.getProperty("productDetail");
-			productDetail = productDetailString.split(",");
-			
-			String productSmallString = properties.getProperty("productSmall");
-			productSmall = productSmallString.split(",");
-			
-			String bannerString = properties.getProperty("banner");
-			banner = bannerString.split(",");
 
-	
-			fileInput.close();
+		  int[] sizes1x = {125,75,300,250,90,90,350,175};
+		  
+		  int[] sizes1_5x = {188,113,450,375,135,135,525,265};
+		  int[] sizes2x = {250,150,600,500,180,180,700,350};
+		  int[] sizes3x = {375,225,900,750,270,270,1050,525};
+		  int[] sizes4x = {500,300,1200,1000,360,360,1400,700};
+		  
+		  int [] thumbnail ={125,75,188,113,250,150,375,225,500,300 };
+		  int [] productDetail = {300,250,450,375,600,500,900,750,1200,1000};
+		  int [] productSmall = {90,90,135,135,180,180,270,270,360,360};
+		  int [] banner = {350,175,525,265,700,350,1050,525,1400,700};
+		  List<StorageObject> bucketContents = null;
+		  try {
 			bucketContents = listBucket(bucket);
 		} catch (GeneralSecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-
 		  
 		  ImagesService imagesService = ImagesServiceFactory.getImagesService();
 		  
@@ -223,8 +214,8 @@ public class ImagesServlet  extends HttpServlet {
 	    
 	    for(int i=0, j=0; i< thumbnail.length; i++, j++){
 	    	
-	    	int width =Integer.parseInt(thumbnail[i]);
-            int height = Integer.parseInt(thumbnail[i+1]);
+	    	int width =(Integer)thumbnail[i];
+            int height = (Integer)thumbnail[i+1];
             System.out.println(width + "X" + height);
             
             Transform resize1 = ImagesServiceFactory.makeResize(width, height);
@@ -244,8 +235,8 @@ public class ImagesServlet  extends HttpServlet {
 	    
 			for(int i=0, j=0 ; i< productDetail.length; i++, j++){
 				    	
-				    	int width =Integer.parseInt(productDetail[i]);
-			            int height = Integer.parseInt(productDetail[i+1]);
+				    	int width =(Integer)productDetail[i];
+			            int height = (Integer)productDetail[i+1];
 			            System.out.println(width + "X" + height);
 			            
 			            Transform resize_1_5 = ImagesServiceFactory.makeResize(width, height);
@@ -264,8 +255,8 @@ public class ImagesServlet  extends HttpServlet {
 			
 			for(int i=0, j=0; i< productSmall.length; i++, j++){
 		    	
-		    	int width =Integer.parseInt(productSmall[i]);
-	            int height = Integer.parseInt(productSmall[i+1]);
+		    	int width =(Integer)productSmall[i];
+	            int height = (Integer)productSmall[i+1];
 	            System.out.println(width + "X" + height);
 	            
 	            Transform resize2x = ImagesServiceFactory.makeResize(width, height);
@@ -285,8 +276,8 @@ public class ImagesServlet  extends HttpServlet {
 			
 				for(int i=0, j=0; i< banner.length; i++, j++){
 		    	
-		    	int width =Integer.parseInt(banner[i]);
-	            int height = Integer.parseInt(banner[i+1]);
+		    	int width =(Integer)banner[i];
+	            int height = (Integer)banner[i+1];
 	            System.out.println(width + "X" + height);
 	            
 	            Transform resize3x = ImagesServiceFactory.makeResize(width, height);
