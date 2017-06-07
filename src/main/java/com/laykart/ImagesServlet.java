@@ -137,6 +137,7 @@ public class ImagesServlet  extends HttpServlet {
                                                 properties.load(fileInput);
                                                 
                                                 bucket = properties.getProperty("bucket");
+                                                System.out.println(bucket);
                                                 
                                                 String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
                                                 thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
@@ -183,6 +184,8 @@ public class ImagesServlet  extends HttpServlet {
                                                 }
 
                                                 for (StorageObject object : bucketContents) {
+                                                  
+                                                  System.out.println(object.getName());
                                                                 
                                                                 String objectName = object.getName();
                                                 if(objectName.endsWith(".png") || objectName.endsWith(".jpg")){
