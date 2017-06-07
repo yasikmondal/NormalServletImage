@@ -140,7 +140,8 @@ public class ImagesServlet  extends HttpServlet {
                                                 System.out.println(bucket);
                                                 
                                                 String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
-                                                thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
+                                  System.out.println(thumbnailDestinationFolderString);              
+                                  thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
                                                 
                                                 String productDetailDestinationFolderString = properties.getProperty("productDetailDestinationFolder");
                                                 productDetailDestinationFolder = productDetailDestinationFolderString.split(",");
