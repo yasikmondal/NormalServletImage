@@ -358,7 +358,10 @@ public class ImagesServlet  extends HttpServlet {
                     PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
                     out.println("Converted Successfully !! Please check in cloud storage");
-                    out.println("Conversion Time:" +days + "Days," + hours + "Hours," + mini + "Minutes," + sec + "Second."  );
+                    out.println("Conversion Time: \n"  );
+                    
+                    out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
+
                                 }
 
 
