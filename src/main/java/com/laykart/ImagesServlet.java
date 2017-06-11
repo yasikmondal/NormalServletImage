@@ -35,7 +35,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -61,6 +60,7 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.repackaged.org.joda.time.Instant;
+import com.google.appengine.repackaged.org.joda.time.Interval;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsService;
@@ -138,7 +138,9 @@ public class ImagesServlet  extends HttpServlet {
                                 String [] productDetail = null;
                                 String [] productSmall = null;
                                 String [] banner = null;
-                                ZonedDateTime now = ZonedDateTime.now();
+                                Date startDate = new Date();
+                                
+                                
                                 
                                 List<StorageObject> bucketContents = null;
                                 try {
@@ -342,12 +344,13 @@ public class ImagesServlet  extends HttpServlet {
                                                 
                                                 
                   		}// else end
-                                  ZonedDateTime oldDate = ZonedDateTime.now();
-                                  //ZonedDateTime oldDate = now.minusDays(1).minusMinutes(10);
-                                  Duration duration = Duration.between(oldDate, now);
-                                  System.out.println("ISO-8601: " + duration);
-                                  System.out.println("Minutes: " + duration.toMinutes());
-                                  long mini= duration.toMinutes();
+                                  Date endDate= new Date();
+                                  Interval interval = new Interval(startDate.getTime(), endDate.getTime());
+                                  com.google.appengine.repackaged.org.joda.time.Duration period = interval.toDuration();
+                                  long days= period.getStandardDays(); //gives the number of days elapsed between start and end date
+                                  long hours= period.getStandardHours();
+                                  long mini= period.getStandardMinutes();
+                                  long sec= period.getStandardSeconds();
                                   
                                   // close for loop
                                                 
@@ -358,7 +361,7 @@ public class ImagesServlet  extends HttpServlet {
                     PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
                     out.println("Converted Successfully !! Please check in cloud storage");
-                    out.println("Conversion Time:" + mini + "Minutes" );
+                    out.println("Conversion Time:" +days + "Days," + hours + "Hours," + mini + "Minutes," + sec + "Second."  );
                                 }
 
 
