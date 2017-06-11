@@ -253,7 +253,7 @@ public class ImagesServlet extends HttpServlet {
 						// For Thumbnail
 						
 						gcsService.createOrReplace(
-								new GcsFilename(movedFolder,
+								new GcsFilename(bucket,
 										objectName + ".jpeg"),
 								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 								ByteBuffer.wrap(blobImage.getImageData()));
