@@ -63,318 +63,342 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+
 //@MultipartConfig
 @SuppressWarnings("serial")
-public class ImagesServlet  extends HttpServlet {
-                
+public class ImagesServlet extends HttpServlet {
 
-                String bucket = null;
-                String sourceImageFolder = null;
-                String thumbnailDestinationFolder[] = null;
-                String productDetailDestinationFolder [] = null;
-                String productSmallDestinationFolder [] = null;
-                String bannerDestinationFolder []= null;
-                
-                          
-                  
+	String bucket = null;
+	String sourceImageFolder = null;
+	String  movedFolder = null;
+	String thumbnailDestinationFolder[] = null;
+	String productDetailDestinationFolder[] = null;
+	String productSmallDestinationFolder[] = null;
+	String bannerDestinationFolder[] = null;
 
-                  // [START gcs]
-                  
-                  //Allows creating and accessing files in Google Cloud Storage.
-                  private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
-                      .initialRetryDelayMillis(50)
-                      .retryMaxAttempts(50)
-                      .totalRetryPeriodMillis(150000)
-                      .build());
-                  // [END gcs]
-                  
-                  /*@Override
-                  public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
-                                  
-                                  
-                                    Part filePart = req.getPart("fileName"); // Retrieves <input type="file" name="file">
-                                    //String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-                                    //InputStream fileContent = filePart.getInputStream();
-                                  
-                                  String newImageUrl = null;
-                                    CloudStorageHelper cludhelp=new CloudStorageHelper();
-                                                  newImageUrl = cludhelp.uploadFile( filePart , bucket);
-                                                  
-                                  //doGet(req, resp);
-                                                  System.out.println(newImageUrl);
-                                                  
-                  }*/
-                  
-                  public static List<StorageObject> listBucket(String bucketName) throws IOException, GeneralSecurityException {
-                                                Storage client = StorageFactory.getService();
-                                                Storage.Objects.List listRequest = client.objects().list(bucketName);
+	// [START gcs]
 
-                                                List<StorageObject> results = new ArrayList<StorageObject>();
-                                                Objects objects;
+	// Allows creating and accessing files in Google Cloud Storage.
+	private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
+			.initialRetryDelayMillis(50).retryMaxAttempts(50).totalRetryPeriodMillis(150000).build());
+	// [END gcs]
 
-                                                // Iterate through each page of results, and add them to our results
-                                                // list.
-                                                do {
-                                                                objects = listRequest.execute();
-                                                                // Add the items in this page of results to the list we'll return.
-                                                                results.addAll(objects.getItems());
+	/*
+	 * @Override public void doPost(HttpServletRequest req, HttpServletResponse
+	 * resp) throws ServletException,IOException {
+	 * 
+	 * 
+	 * Part filePart = req.getPart("fileName"); // Retrieves <input type="file"
+	 * name="file"> //String fileName =
+	 * Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); //
+	 * MSIE fix. //InputStream fileContent = filePart.getInputStream();
+	 * 
+	 * String newImageUrl = null; CloudStorageHelper cludhelp=new
+	 * CloudStorageHelper(); newImageUrl = cludhelp.uploadFile( filePart ,
+	 * bucket);
+	 * 
+	 * //doGet(req, resp); System.out.println(newImageUrl);
+	 * 
+	 * }
+	 */
 
-                                                                // Get the next page, in the next iteration of this loop.
-                                                                listRequest.setPageToken(objects.getNextPageToken());
-                                                } while (null != objects.getNextPageToken());
+	public static List<StorageObject> listBucket(String bucketName) throws IOException, GeneralSecurityException {
+		Storage client = StorageFactory.getService();
+		Storage.Objects.List listRequest = client.objects().list(bucketName);
 
-                                                return results;
-                                }
-                  
-                 
+		List<StorageObject> results = new ArrayList<StorageObject>();
+		Objects objects;
 
-                  @SuppressWarnings("resource")
-                @Override
-                  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                                  
-                                String [] thumbnail =null;
-                                String [] productDetail = null;
-                                String [] productSmall = null;
-                                String [] banner = null;
-                                String [] sourceFolder = null;
-                                Date startDate = new Date();
-                                
-                                
-                                
-                                List<StorageObject> bucketContents = null;
-                                try {
-                                                File file = new File("WEB-INF/application.properties");
-                                                FileInputStream fileInput = new FileInputStream(file);
-                                                Properties properties = new Properties();
-                                                properties.load(fileInput);
-                                                
-                                                bucket = properties.getProperty("bucket");
-                                                System.out.println(bucket);
-                                                sourceImageFolder = properties.getProperty("sourceImageFolder");
-                                                System.out.println(sourceImageFolder);
-                                                
-                                                
-                                                String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
-                                  System.out.println(thumbnailDestinationFolderString);              
-                                  thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
-                                                
-                                                String productDetailDestinationFolderString = properties.getProperty("productDetailDestinationFolder");
-                                                productDetailDestinationFolder = productDetailDestinationFolderString.split(",");
-                                                
-                                                String productSmallDestinationFolderString = properties.getProperty("productSmallDestinationFolder");
-                                                productSmallDestinationFolder = productSmallDestinationFolderString.split(",");
-                                                
-                                                String bannerDestinationFolderString = properties.getProperty("bannerDestinationFolder");
-                                                bannerDestinationFolder = bannerDestinationFolderString.split(",");
-                                                
-                                                
-                                                String thumbnailString = properties.getProperty("thumbnail");
-                                                thumbnail = thumbnailString.split(",");
-                                                
-                                                String productDetailString = properties.getProperty("productDetail");
-                                                productDetail = productDetailString.split(",");
-                                                
-                                                String productSmallString = properties.getProperty("productSmall");
-                                                productSmall = productSmallString.split(",");
-                                                
-                                                String bannerString = properties.getProperty("banner");
-                                                banner = bannerString.split(",");
+		// Iterate through each page of results, and add them to our results
+		// list.
+		do {
+			objects = listRequest.execute();
+			// Add the items in this page of results to the list we'll return.
+			results.addAll(objects.getItems());
 
-                
-                                                fileInput.close();
-                                                bucketContents = listBucket(bucket);
-                                } catch (GeneralSecurityException e) {
-                                                // TODO Auto-generated catch block
-                                                e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                                e.printStackTrace();
-                                } catch (IOException e) {
-                                                e.printStackTrace();
-                                }
+			// Get the next page, in the next iteration of this loop.
+			listRequest.setPageToken(objects.getNextPageToken());
+		} while (null != objects.getNextPageToken());
 
-                                  
-                                  ImagesService imagesService = ImagesServiceFactory.getImagesService();
-                                  
-                                  if (null == bucketContents) {
-                                                                System.out.println("There were no objects in the given bucket; try adding some and re-running.");
-                                                }else{
-                                                	
+		return results;
+	}
 
-                                                for (StorageObject object : bucketContents) {
-                                                  
-                                                  System.out.println(object.getName());
-                                                                
-                                                                String objectName = object.getName();
-                                                if(objectName.endsWith(".png") || objectName.endsWith(".jpg")){
-                                                                objectName = objectName.substring(7, (objectName.length()-4));
-                                                                System.out.println(objectName);
-                                                }else if(objectName.endsWith(".jpeg")){
-                                                                objectName = objectName.substring(7, (objectName.length()-5));
-                                                                System.out.println(objectName);
-                                                }
-                                                String path= object.getName();
-                                                System.out.println("**********"+path);
-                                                if (path.startsWith(sourceImageFolder) ) {
-                                                                if ("image/png".equals(object.getContentType())) {
-                                                                                
-                                                                                
-                                                                
-                                                                
-                                                
-                      // Create a temp file to upload
-                     // Path tempPath = Files.createTempFile("StorageSample", "txt");
-                     // Files.write(tempPath, "Sample file".getBytes());
-                     // File tempFile = tempPath.toFile();
-                     // tempFile.deleteOnExit();
-                      
-                                  //uploadFile(TEST_FILENAME, "image/png", tempFile, bucketName);
-                                  
-                    //[START rotate]
-                    // Make an image from a Cloud Storage object, and transform it.
-                    
-                    //BlobstoreService allows you to manage the creation and serving of large, immutable blobs to users. 
-                    System.out.println("Test3");
-                    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-                    BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/" + object.getName()); // Creating a BlobKey for a Google Storage File.
-                    //BlobKey blobKey = blobstoreService.createGsBlobKey("//storage.googleapis.com/" + bucket + "/Test/unnamed.jpg");
-                    
-                    Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create an image backed by the specified blobKey.
-                    
-                    
-                    // For Thumbnail
-                    
-                    for(int i=0, j=0; i< thumbnail.length; i++, j++){
-                                
-                                int width =Integer.parseInt(thumbnail[i]);
-            int height = Integer.parseInt(thumbnail[i+1]);
-            System.out.println(width + "X" + height);
-            
-            Transform resize1 = ImagesServiceFactory.makeResize(width, height);
-                    Image resizeImage1 = imagesService.applyTransform(resize1, blobImage);
+	@SuppressWarnings("resource")
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-                    // Write the transformed image back to a Cloud Storage object.
-                    gcsService.createOrReplace(
-                        new GcsFilename(thumbnailDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
-                        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-                        ByteBuffer.wrap(resizeImage1.getImageData()));
+		String[] thumbnail = null;
+		String[] productDetail = null;
+		String[] productSmall = null;
+		String[] banner = null;
+		String[] sourceFolder = null;
+		
+		Date startDate = new Date();
 
-                                i++;
-                    }
-                    
-                    
-                 // For productDetail
-                    
-                                                for(int i=0, j=0 ; i< productDetail.length; i++, j++){
-                                                                                
-                                                                                int width =Integer.parseInt(productDetail[i]);
-                                                            int height = Integer.parseInt(productDetail[i+1]);
-                                                            System.out.println(width + "X" + height);
-                                                            
-                                                            Transform resize_1_5 = ImagesServiceFactory.makeResize(width, height);
-                                                                    Image resizeImage1_5 = imagesService.applyTransform(resize_1_5, blobImage);
-                                                
-                                                                    // Write the transformed image back to a Cloud Storage object.
-                                                                    gcsService.createOrReplace(
-                                                                        new GcsFilename(productDetailDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
-                                                                        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-                                                                        ByteBuffer.wrap(resizeImage1_5.getImageData()));
-                                                
-                                                                                i++;
-                    }
-                                                
-                // For productSmall
-                                                
-                                                for(int i=0, j=0; i< productSmall.length; i++, j++){
-                                                
-                                                int width =Integer.parseInt(productSmall[i]);
-                            int height = Integer.parseInt(productSmall[i+1]);
-                            System.out.println(width + "X" + height);
-                            
-                            Transform resize2x = ImagesServiceFactory.makeResize(width, height);
-                                    Image resizeImage2 = imagesService.applyTransform(resize2x, blobImage);
-                
-                                    // Write the transformed image back to a Cloud Storage object.
-                                    gcsService.createOrReplace(
-                                        new GcsFilename(productSmallDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
-                                        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-                                        ByteBuffer.wrap(resizeImage2.getImageData()));
-                
-                                                i++;
-                                                }
-                                                
-                                                
-                //For banner      
-                                                
-                                                                for(int i=0, j=0; i< banner.length; i++, j++){
-                                                
-                                                int width =Integer.parseInt(banner[i]);
-                            int height = Integer.parseInt(banner[i+1]);
-                            System.out.println(width + "X" + height);
-                            
-                            Transform resize3x = ImagesServiceFactory.makeResize(width, height);
-                                    Image resizeImage3 = imagesService.applyTransform(resize3x, blobImage);
-                
-                                    // Write the transformed image back to a Cloud Storage object.
-                                    gcsService.createOrReplace(
-                                        new GcsFilename(bannerDestinationFolder[j], objectName + "_"+width + "x" + height+ ".jpeg"),
-                                        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-                                        ByteBuffer.wrap(resizeImage3.getImageData()));
-                
-                                                i++;
-                                                }
-                                                                /*for(int i=0; i< sizes4x.length; i++){
-                                                                
-                                                                int width =(Integer)sizes4x[i];
-                                            int height = (Integer)sizes4x[i+1];
-                                            System.out.println(width + "X" + height);
-                                            
-                                            Transform resize4x = ImagesServiceFactory.makeResize(width, height);
-                                                    Image resizeImage4 = imagesService.applyTransform(resize4x, blobImage);
-                                
-                                                    // Write the transformed image back to a Cloud Storage object.
-                                                    gcsService.createOrReplace(
-                                                        new GcsFilename(destinationFolder4x, "resizeImage_"+width + "x" + height+ ".jpeg"),
-                                                        new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-                                                        ByteBuffer.wrap(resizeImage4.getImageData()));
-                                
-                                                                i++;
-                                                                }*/
-                    
-                    
-                    
-                    
-                                                }
-                                                }
-                                                }
-                                                
-                                                
-                  		}// else end
-                                  Date endDate= new Date();
-                                  Interval interval = new Interval(startDate.getTime(), endDate.getTime());
-                                  com.google.appengine.repackaged.org.joda.time.Duration period = interval.toDuration();
-                                  long days= period.getStandardDays(); //gives the number of days elapsed between start and end date
-                                  long hours= period.getStandardHours();
-                                  long mini= period.getStandardMinutes();
-                                  long sec= period.getStandardSeconds();
-                                  
-                                  // close for loop
-                                                
-                                //[END rotate]
-                    System.out.println("Test4");
-                    // Output some simple HTML to display the images we wrote to Cloud Storage
-                    // in the browser.
-                    PrintWriter out = resp.getWriter();
-                    out.println("<html><body>\n");
-                    
-                    out.println("Converted Successfully !! Please check in cloud storage \n" );
-                    out.println("\n" );
-                    out.println("\n" );
-                    out.println("\nConversion Time: \n"  );
-                    out.println("\n" );
-                    
-                    out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
+		List<StorageObject> bucketContents = null;
+		try {
+			File file = new File("WEB-INF/application.properties");
+			FileInputStream fileInput = new FileInputStream(file);
+			Properties properties = new Properties();
+			properties.load(fileInput);
 
-                                }
+			bucket = properties.getProperty("bucket");
+			System.out.println(bucket);
+			
+			sourceImageFolder = properties.getProperty("sourceImageFolder");
+			System.out.println(sourceImageFolder);
+			
+			movedFolder = properties.getProperty("movedFolder");
+			System.out.println(movedFolder);
+			
 
+			String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
+			System.out.println(thumbnailDestinationFolderString);
+			thumbnailDestinationFolder = thumbnailDestinationFolderString.split(",");
+
+			String productDetailDestinationFolderString = properties.getProperty("productDetailDestinationFolder");
+			productDetailDestinationFolder = productDetailDestinationFolderString.split(",");
+
+			String productSmallDestinationFolderString = properties.getProperty("productSmallDestinationFolder");
+			productSmallDestinationFolder = productSmallDestinationFolderString.split(",");
+
+			String bannerDestinationFolderString = properties.getProperty("bannerDestinationFolder");
+			bannerDestinationFolder = bannerDestinationFolderString.split(",");
+
+			String thumbnailString = properties.getProperty("thumbnail");
+			thumbnail = thumbnailString.split(",");
+
+			String productDetailString = properties.getProperty("productDetail");
+			productDetail = productDetailString.split(",");
+
+			String productSmallString = properties.getProperty("productSmall");
+			productSmall = productSmallString.split(",");
+
+			String bannerString = properties.getProperty("banner");
+			banner = bannerString.split(",");
+
+			fileInput.close();
+			bucketContents = listBucket(bucket);
+		} catch (GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		ImagesService imagesService = ImagesServiceFactory.getImagesService();
+
+		if (null == bucketContents) {
+			System.out.println("There were no objects in the given bucket; try adding some and re-running.");
+		} else {
+
+			for (StorageObject object : bucketContents) {
+
+				System.out.println(object.getName());
+
+				String objectName = object.getName();
+				if (objectName.endsWith(".png") || objectName.endsWith(".jpg")) {
+					objectName = objectName.substring(7, (objectName.length() - 4));
+					System.out.println(objectName);
+				} else if (objectName.endsWith(".jpeg")) {
+					objectName = objectName.substring(7, (objectName.length() - 5));
+					System.out.println(objectName);
+				}
+				String path = object.getName();
+				System.out.println("**********" + path);
+				if (path.startsWith(sourceImageFolder)) {
+					if ("image/png".equals(object.getContentType())) {
+
+						// Create a temp file to upload
+						// Path tempPath = Files.createTempFile("StorageSample",
+						// "txt");
+						// Files.write(tempPath, "Sample file".getBytes());
+						// File tempFile = tempPath.toFile();
+						// tempFile.deleteOnExit();
+
+						// uploadFile(TEST_FILENAME, "image/png", tempFile,
+						// bucketName);
+
+						// [START rotate]
+						// Make an image from a Cloud Storage object, and
+						// transform it.
+
+						// BlobstoreService allows you to manage the creation
+						// and serving of large, immutable blobs to users.
+						System.out.println("Test3");
+						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+						BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/" + object.getName()); // Creating
+																														// a
+																														// BlobKey
+																														// for
+																														// a
+																														// Google
+																														// Storage
+																														// File.
+						// BlobKey blobKey =
+						// blobstoreService.createGsBlobKey("//storage.googleapis.com/"
+						// + bucket + "/Test/unnamed.jpg");
+
+						Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create
+																							// an
+																							// image
+																							// backed
+																							// by
+																							// the
+																							// specified
+																							// blobKey.
+
+						// For Thumbnail
+						
+						gcsService.createOrReplace(
+								new GcsFilename(movedFolder,
+										objectName + ".jpeg"),
+								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+								ByteBuffer.wrap(blobImage.getImageData()));
+						
+						for (int i = 0, j = 0; i < thumbnail.length; i++, j++) {
+
+							int width = Integer.parseInt(thumbnail[i]);
+							int height = Integer.parseInt(thumbnail[i + 1]);
+							System.out.println(width + "X" + height);
+
+							Transform resize1 = ImagesServiceFactory.makeResize(width, height);
+							Image resizeImage1 = imagesService.applyTransform(resize1, blobImage);
+
+							// Write the transformed image back to a Cloud
+							// Storage object.
+							gcsService.createOrReplace(
+									new GcsFilename(thumbnailDestinationFolder[j],
+											objectName + "_" + width + "x" + height + ".jpeg"),
+									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+									ByteBuffer.wrap(resizeImage1.getImageData()));
+
+							i++;
+						}
+
+						// For productDetail
+
+						for (int i = 0, j = 0; i < productDetail.length; i++, j++) {
+
+							int width = Integer.parseInt(productDetail[i]);
+							int height = Integer.parseInt(productDetail[i + 1]);
+							System.out.println(width + "X" + height);
+
+							Transform resize_1_5 = ImagesServiceFactory.makeResize(width, height);
+							Image resizeImage1_5 = imagesService.applyTransform(resize_1_5, blobImage);
+
+							// Write the transformed image back to a Cloud
+							// Storage object.
+							gcsService.createOrReplace(
+									new GcsFilename(productDetailDestinationFolder[j],
+											objectName + "_" + width + "x" + height + ".jpeg"),
+									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+									ByteBuffer.wrap(resizeImage1_5.getImageData()));
+
+							i++;
+						}
+
+						// For productSmall
+
+						for (int i = 0, j = 0; i < productSmall.length; i++, j++) {
+
+							int width = Integer.parseInt(productSmall[i]);
+							int height = Integer.parseInt(productSmall[i + 1]);
+							System.out.println(width + "X" + height);
+
+							Transform resize2x = ImagesServiceFactory.makeResize(width, height);
+							Image resizeImage2 = imagesService.applyTransform(resize2x, blobImage);
+
+							// Write the transformed image back to a Cloud
+							// Storage object.
+							gcsService.createOrReplace(
+									new GcsFilename(productSmallDestinationFolder[j],
+											objectName + "_" + width + "x" + height + ".jpeg"),
+									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+									ByteBuffer.wrap(resizeImage2.getImageData()));
+
+							i++;
+						}
+
+						// For banner
+
+						for (int i = 0, j = 0; i < banner.length; i++, j++) {
+
+							int width = Integer.parseInt(banner[i]);
+							int height = Integer.parseInt(banner[i + 1]);
+							System.out.println(width + "X" + height);
+
+							Transform resize3x = ImagesServiceFactory.makeResize(width, height);
+							Image resizeImage3 = imagesService.applyTransform(resize3x, blobImage);
+
+							// Write the transformed image back to a Cloud
+							// Storage object.
+							gcsService.createOrReplace(
+									new GcsFilename(bannerDestinationFolder[j],
+											objectName + "_" + width + "x" + height + ".jpeg"),
+									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+									ByteBuffer.wrap(resizeImage3.getImageData()));
+
+							i++;
+						}
+						/*
+						 * for(int i=0; i< sizes4x.length; i++){
+						 * 
+						 * int width =(Integer)sizes4x[i]; int height =
+						 * (Integer)sizes4x[i+1]; System.out.println(width + "X"
+						 * + height);
+						 * 
+						 * Transform resize4x =
+						 * ImagesServiceFactory.makeResize(width, height); Image
+						 * resizeImage4 = imagesService.applyTransform(resize4x,
+						 * blobImage);
+						 * 
+						 * // Write the transformed image back to a Cloud
+						 * Storage object. gcsService.createOrReplace( new
+						 * GcsFilename(destinationFolder4x, "resizeImage_"+width
+						 * + "x" + height+ ".jpeg"), new
+						 * GcsFileOptions.Builder().mimeType("image/jpeg").build
+						 * (), ByteBuffer.wrap(resizeImage4.getImageData()));
+						 * 
+						 * i++; }
+						 */
+
+					}
+				}
+			}
+
+		} // else end
+		Date endDate = new Date();
+		Interval interval = new Interval(startDate.getTime(), endDate.getTime());
+		com.google.appengine.repackaged.org.joda.time.Duration period = interval.toDuration();
+		long days = period.getStandardDays(); // gives the number of days
+												// elapsed between start and end
+												// date
+		long hours = period.getStandardHours();
+		long mini = period.getStandardMinutes();
+		long sec = period.getStandardSeconds();
+
+		// close for loop
+
+		// [END rotate]
+		System.out.println("Test4");
+		// Output some simple HTML to display the images we wrote to Cloud
+		// Storage
+		// in the browser.
+		PrintWriter out = resp.getWriter();
+		out.println("<html><body>\n");
+
+		out.println("Converted Successfully !! Please check in cloud storage \n <br>");
+		out.println("\n");
+		out.println("\n");
+		out.println("\nConversion Time: \n");
+		out.println("\n");
+
+		out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days
+				+ "</td><td>" + hours + "</td><td>" + mini + "</td><td>" + sec + "</td></tr></table>");
+
+	}
 
 }
