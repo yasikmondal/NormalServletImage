@@ -133,6 +133,7 @@ public class ImagesServlet extends HttpServlet {
 		String[] banner = null;
 		String[] sourceFolder = null;
 		
+		
 		Date startDate = new Date();
 
 		List<StorageObject> bucketContents = null;
@@ -344,6 +345,16 @@ public class ImagesServlet extends HttpServlet {
 
 							i++;
 						}
+						
+						Transform rotate = ImagesServiceFactory.makeRotate(360);
+						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
+						System.out.println(orginalImage3);
+						
+						gcsService.createOrReplace(
+								new GcsFilename(movedFolder,
+										objectName + ".jpeg"),
+								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+								ByteBuffer.wrap(orginalImage3.getImageData()));
 						/*
 						 * for(int i=0; i< sizes4x.length; i++){
 						 * 
