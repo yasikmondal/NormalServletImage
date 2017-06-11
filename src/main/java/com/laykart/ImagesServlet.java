@@ -355,10 +355,14 @@ public class ImagesServlet  extends HttpServlet {
                     System.out.println("Test4");
                     // Output some simple HTML to display the images we wrote to Cloud Storage
                     // in the browser.
-                    PrintWriter out = resp.getWriter();
+                     PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
-                    out.println("Converted Successfully !! Please check in cloud storage");
+                    
+                    out.println("Converted Successfully !! Please check in cloud storage \n" );
+                    out.println("\n" );
+                    out.println("\n" );
                     out.println("Conversion Time: \n"  );
+                    out.println("\n" );
                     
                     out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
 
