@@ -369,7 +369,7 @@ public class ImagesServlet  extends HttpServlet {
                     out.println("Converted Successfully !! Please check in cloud storage \n" );
                     out.println("\n" );
                     out.println("\n" );
-                    out.println("Conversion Time: \n"  );
+                    out.println("\nConversion Time: \n"  );
                     out.println("\n" );
                     
                     out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
