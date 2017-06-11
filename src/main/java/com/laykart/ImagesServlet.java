@@ -350,7 +350,7 @@ public class ImagesServlet extends HttpServlet {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						Storage.Objects.Copy copyObject= storage.objects().copy(bucket +"/"+ sourceImageFolder , object.getName(), bucket +"/"+ movedFolder, object.getName(), object);
+						Storage.Objects.Copy copyObject= storage.objects().copy(bucket +"/"+ sourceImageFolder , object.getName(),  movedFolder, object.getName(), object);
 
 						try {
 						System.out.println("Trying to copy over " + object.getName() + " from " + bucket + sourceImageFolder + " >>>> " + bucket + movedFolder);
