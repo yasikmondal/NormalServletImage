@@ -342,7 +342,28 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 						
-						Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
+						//StorageObject storage = new StorageObject();
+						Storage storage = null;
+						try {
+							storage = StorageFactory.getService();
+						} catch (GeneralSecurityException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						Storage.Objects.Copy copyObject= storage.objects().copy(bucket + sourceImageFolder , object.getName(), bucket + movedFolder, object.getName(), object);
+
+						try {
+						System.out.println("Trying to copy over " + object.getName() + " from " + bucket + sourceImageFolder + " >>>> " + bucket + movedFolder);
+						//copy the file over to the new bucket
+						Object copyRes = copyObject.execute();
+						System.out.println(copyRes.toString());
+						}
+						catch (Exception e) {
+						System.out.println("Exception trying to copy over " + object.getName() + " " + e.getLocalizedMessage());
+						    }
+						
+						
+						/*Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
 						
 						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
 						System.out.println(orginalImage3);
@@ -351,7 +372,7 @@ public class ImagesServlet extends HttpServlet {
 								new GcsFilename(movedFolder,
 										objectName + ".jpeg"),
 								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-								ByteBuffer.wrap(orginalImage3.getImageData()));
+								ByteBuffer.wrap(orginalImage3.getImageData()));*/
 						/*
 						 * for(int i=0; i< sizes4x.length; i++){
 						 * 
