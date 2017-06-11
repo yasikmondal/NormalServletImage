@@ -342,7 +342,7 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 						
-						Image imag = ImagesServiceFactory.makeImageFromFilename("https://storage.googleapis.com/" + bucket +"/" + object.getName());
+						Image imag = ImagesServiceFactory.makeImageFromFilename("/gs/" + bucket +"/" + object.getName());
 						//Transform rotate = ImagesServiceFactory.makeRotate(360);
 						//Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
 						System.out.println(imag);
