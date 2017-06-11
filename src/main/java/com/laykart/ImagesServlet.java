@@ -248,7 +248,7 @@ public class ImagesServlet extends HttpServlet {
 						byte[] abcd= blobImage.getImageData();
 						System.out.println(abcd);																	// by
 																							// the
-																							// specified
+						System.out.println(object.getName());																	// specified
 																							// blobKey.
 
 						// For Thumbnail
