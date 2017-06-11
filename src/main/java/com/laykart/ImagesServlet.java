@@ -342,15 +342,16 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 						
-						Transform rotate = ImagesServiceFactory.makeRotate(360);
-						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
-						System.out.println(orginalImage3);
+						Image imag = ImagesServiceFactory.makeImageFromFilename("https://storage.googleapis.com/laykart-165108.appspot.com/" + object.getName());
+						//Transform rotate = ImagesServiceFactory.makeRotate(360);
+						//Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
+						System.out.println(imag);
 						
 						gcsService.createOrReplace(
 								new GcsFilename(movedFolder,
 										objectName + ".jpeg"),
 								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-								ByteBuffer.wrap(orginalImage3.getImageData()));
+								ByteBuffer.wrap(imag.getImageData()));
 						/*
 						 * for(int i=0; i< sizes4x.length; i++){
 						 * 
