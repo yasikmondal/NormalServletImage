@@ -30,6 +30,8 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -135,7 +137,7 @@ public class ImagesServlet  extends HttpServlet {
                                 String [] productDetail = null;
                                 String [] productSmall = null;
                                 String [] banner = null;
-                                Date startTime = Calendar.getInstance().getTime();
+                                ZonedDateTime now = ZonedDateTime.now();
                                 
                                 List<StorageObject> bucketContents = null;
                                 try {
@@ -339,17 +341,12 @@ public class ImagesServlet  extends HttpServlet {
                                                 
                                                 
                   		}// else end
-                                  Date endTime = Calendar.getInstance().getTime();
-                                  long difference = endTime.getTime() - startTime.getTime();
-                                  long differenceSeconds = difference / 1000 % 60;
-                                  long differenceMinutes = difference / (60 * 1000) % 60;
-                                  long differenceHours = difference / (60 * 60 * 1000) % 24;
-                                  long differenceDays = difference / (24 * 60 * 60 * 1000);
-                                  
-                                  System.out.println(differenceDays + " days, ");
-                                  System.out.println(differenceHours + " hours, ");
-                                  System.out.println(differenceMinutes + " minutes, ");
-                                  System.out.println(differenceSeconds + " seconds.");
+                                  ZonedDateTime oldDate = ZonedDateTime.now();
+                                  //ZonedDateTime oldDate = now.minusDays(1).minusMinutes(10);
+                                  Duration duration = Duration.between(oldDate, now);
+                                  System.out.println("ISO-8601: " + duration);
+                                  System.out.println("Minutes: " + duration.toMinutes());
+                                  long mini= duration.toMinutes();
                                   
                                   // close for loop
                                                 
@@ -360,7 +357,7 @@ public class ImagesServlet  extends HttpServlet {
                     PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
                     out.println("Converted Successfully !! Please check in cloud storage");
-                    out.println("Conversion Time:" + differenceDays+ "Days,"+ differenceHours + "Hours," + differenceMinutes + "Minutes" + differenceMinutes + "seconds."  );
+                    out.println("Conversion Time:" + mini + "Minutes" );
                                 }
 
 
