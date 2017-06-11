@@ -28,8 +28,12 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.Objects;
@@ -52,6 +57,7 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
+import com.google.appengine.repackaged.org.joda.time.Instant;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsService;
@@ -67,7 +73,8 @@ public class ImagesServlet  extends HttpServlet {
                 String productDetailDestinationFolder [] = null;
                 String productSmallDestinationFolder [] = null;
                 String bannerDestinationFolder []= null;
-                  
+                
+                          
                   
 
                   // [START gcs]
@@ -128,6 +135,7 @@ public class ImagesServlet  extends HttpServlet {
                                 String [] productDetail = null;
                                 String [] productSmall = null;
                                 String [] banner = null;
+                                Date startTime = Calendar.getInstance().getTime();
                                 
                                 List<StorageObject> bucketContents = null;
                                 try {
@@ -182,7 +190,8 @@ public class ImagesServlet  extends HttpServlet {
                                   
                                   if (null == bucketContents) {
                                                                 System.out.println("There were no objects in the given bucket; try adding some and re-running.");
-                                                }
+                                                }else{
+                                                	
 
                                                 for (StorageObject object : bucketContents) {
                                                   
@@ -327,6 +336,20 @@ public class ImagesServlet  extends HttpServlet {
                     
                                                 }
                                                 }
+                                                
+                                                
+                  		}// else end
+                                  Date endTime = Calendar.getInstance().getTime();
+                                  long difference = endTime.getTime() - startTime.getTime();
+                                  long differenceSeconds = difference / 1000 % 60;
+                                  long differenceMinutes = difference / (60 * 1000) % 60;
+                                  long differenceHours = difference / (60 * 60 * 1000) % 24;
+                                  long differenceDays = difference / (24 * 60 * 60 * 1000);
+                                  
+                                  System.out.println(differenceDays + " days, ");
+                                  System.out.println(differenceHours + " hours, ");
+                                  System.out.println(differenceMinutes + " minutes, ");
+                                  System.out.println(differenceSeconds + " seconds.");
                                   
                                   // close for loop
                                                 
@@ -337,6 +360,7 @@ public class ImagesServlet  extends HttpServlet {
                     PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
                     out.println("Converted Successfully !! Please check in cloud storage");
+                    out.println("Conversion Time:" + differenceDays+ "Days,"+ differenceHours + "Hours," + differenceMinutes + "Minutes" + differenceMinutes + "seconds."  );
                                 }
 
 
