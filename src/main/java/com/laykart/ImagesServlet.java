@@ -69,6 +69,7 @@ public class ImagesServlet  extends HttpServlet {
                 
 
                 String bucket = null;
+                String sourceImageFolder = null;
                 String thumbnailDestinationFolder[] = null;
                 String productDetailDestinationFolder [] = null;
                 String productSmallDestinationFolder [] = null;
@@ -135,6 +136,7 @@ public class ImagesServlet  extends HttpServlet {
                                 String [] productDetail = null;
                                 String [] productSmall = null;
                                 String [] banner = null;
+                                String [] sourceFolder = null;
                                 Date startDate = new Date();
                                 
                                 
@@ -148,6 +150,9 @@ public class ImagesServlet  extends HttpServlet {
                                                 
                                                 bucket = properties.getProperty("bucket");
                                                 System.out.println(bucket);
+                                                sourceImageFolder = properties.getProperty("sourceImageFolder");
+                                                System.out.println(sourceImageFolder);
+                                                
                                                 
                                                 String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
                                   System.out.println(thumbnailDestinationFolderString);              
@@ -207,7 +212,9 @@ public class ImagesServlet  extends HttpServlet {
                                                                 objectName = objectName.substring(7, (objectName.length()-5));
                                                                 System.out.println(objectName);
                                                 }
-                                                                
+                                                String path= object.getName();
+                                                System.out.println("**********"+path);
+                                                if (path.startsWith(sourceImageFolder) ) {
                                                                 if ("image/png".equals(object.getContentType())) {
                                                                                 
                                                                                 
@@ -338,6 +345,7 @@ public class ImagesServlet  extends HttpServlet {
                     
                                                 }
                                                 }
+                                                }
                                                 
                                                 
                   		}// else end
@@ -355,7 +363,7 @@ public class ImagesServlet  extends HttpServlet {
                     System.out.println("Test4");
                     // Output some simple HTML to display the images we wrote to Cloud Storage
                     // in the browser.
-                     PrintWriter out = resp.getWriter();
+                    PrintWriter out = resp.getWriter();
                     out.println("<html><body>\n");
                     
                     out.println("Converted Successfully !! Please check in cloud storage \n" );
@@ -364,7 +372,7 @@ public class ImagesServlet  extends HttpServlet {
                     out.println("Conversion Time: \n"  );
                     out.println("\n" );
                     
-                    out.println("<table border="1" ><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
+                    out.println("<table><tr><th>Days</th><th>Hours</th><th>Minutes</th><th>Seconds</th></tr><tr><td>" + days + "</td><td>"+ hours + "</td><td>" + mini + "</td><td>" +sec + "</td></tr></table>" );
 
                                 }
 
