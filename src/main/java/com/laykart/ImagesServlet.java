@@ -363,7 +363,7 @@ public class ImagesServlet extends HttpServlet {
 						    }
 						
 						
-						/*Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
+						Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
 						
 						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
 						System.out.println(orginalImage3);
@@ -372,7 +372,7 @@ public class ImagesServlet extends HttpServlet {
 								new GcsFilename(movedFolder,
 										objectName + ".jpeg"),
 								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-								ByteBuffer.wrap(orginalImage3.getImageData()));*/
+								ByteBuffer.wrap(orginalImage3.getImageData()));
 						/*
 						 * for(int i=0; i< sizes4x.length; i++){
 						 * 
