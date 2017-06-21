@@ -352,7 +352,7 @@ public class ImagesServlet extends HttpServlet {
 						}
 						
 					GcsFilename source = new GcsFilename(bucket, object.getName());
-						GcsFilename source2 = new GcsFilename(bucket , imageName);
+						GcsFilename source2 = new GcsFilename(bucket + "/"+ sourceImageFolder , imageName);
 					    System.out.println("SOURCE::::" + source);
 						System.out.println("SOURCE2::::" + source2);
 					    GcsFilename dest = new GcsFilename(movedFolder, objectName +".png");
