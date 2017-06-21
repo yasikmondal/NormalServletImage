@@ -342,8 +342,17 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 						
+						String imageName = object.getName();
+						if (imageName.endsWith(".png") || imageName.endsWith(".jpg")) {
+							imageName = imageName.substring(7, (imageName.length()));
+							System.out.println(imageName);
+						} else if (imageName.endsWith(".jpeg")) {
+							imageName = imageName.substring(7, (imageName.length()));
+							System.out.println(imageName);
+						}
+						
 					GcsFilename source = new GcsFilename(bucket, object.getName());
-						GcsFilename source2 = new GcsFilename(bucket , objectName);
+						GcsFilename source2 = new GcsFilename(bucket , imageName);
 					    System.out.println("SOURCE::::" + source);
 						System.out.println("SOURCE2::::" + source2);
 					    GcsFilename dest = new GcsFilename(movedFolder, objectName +".png");
