@@ -342,6 +342,15 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 						
+					GcsFilename source = new GcsFilename(bucket, object.getName());
+						System.out.println(source);
+					    
+					    GcsFilename dest = new GcsFilename(movedFolder, objectName + ".jpeg");
+						System.out.println(dest);
+					    gcsService.copy(source, dest);
+					    
+					    gcsService.delete(source);
+						
 						//StorageObject storage = new StorageObject();
 						Storage storage = null;
 						try {
