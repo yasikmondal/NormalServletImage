@@ -343,13 +343,12 @@ public class ImagesServlet extends HttpServlet {
 						}
 						
 					GcsFilename source = new GcsFilename(bucket, object.getName());
-						System.out.println(source);
+						GcsFilename source2 = new GcsFilename(bucket + "/"+ sourceImageFolder, objectName);
 					    
 					    GcsFilename dest = new GcsFilename(movedFolder, objectName + ".jpeg");
-						System.out.println(dest);
 					    gcsService.copy(source, dest);
 					    
-					    gcsService.delete(source);
+					    gcsService.delete(source2);
 						
 						//StorageObject storage = new StorageObject();
 						Storage storage = null;
@@ -371,7 +370,7 @@ public class ImagesServlet extends HttpServlet {
 						System.out.println("Exception trying to copy over " + object.getName() + " " + e.getLocalizedMessage());
 						    }
 						
-						
+						/*
 						Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
 						
 						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
@@ -381,7 +380,7 @@ public class ImagesServlet extends HttpServlet {
 								new GcsFilename(movedFolder,
 										objectName + ".jpeg"),
 								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-								ByteBuffer.wrap(orginalImage3.getImageData()));
+								ByteBuffer.wrap(orginalImage3.getImageData())); */
 						/*
 						 * for(int i=0; i< sizes4x.length; i++){
 						 * 
