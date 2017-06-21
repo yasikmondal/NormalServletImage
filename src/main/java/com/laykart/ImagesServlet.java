@@ -344,10 +344,11 @@ public class ImagesServlet extends HttpServlet {
 						
 					GcsFilename source = new GcsFilename(bucket, object.getName());
 						GcsFilename source2 = new GcsFilename(bucket + "/"+ sourceImageFolder, objectName);
-					    
+					    System.out.println("SOURCE::::" + source);
+						System.out.println("SOURCE2::::" + source2);
 					    GcsFilename dest = new GcsFilename(movedFolder, objectName + ".jpeg");
 					    gcsService.copy(source, dest);
-					    
+					    System.out.println("DESTINATION::::" + dest);
 					    gcsService.delete(source2);
 						
 						//StorageObject storage = new StorageObject();
