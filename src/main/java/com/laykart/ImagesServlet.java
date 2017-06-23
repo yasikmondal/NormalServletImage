@@ -75,6 +75,8 @@ public class ImagesServlet extends HttpServlet {
 	String productDetailDestinationFolder[] = null;
 	String productSmallDestinationFolder[] = null;
 	String bannerDestinationFolder[] = null;
+	String movedFolderBanner = null;
+	String sourceImageBannerFolder = null;
 
 	// [START gcs]
 
@@ -149,8 +151,14 @@ public class ImagesServlet extends HttpServlet {
 			sourceImageFolder = properties.getProperty("sourceImageFolder");
 			System.out.println(sourceImageFolder);
 			
+			sourceImageBannerFolder = properties.getProperty("sourceImageBannerFolder");
+			System.out.println(sourceImageBannerFolder);
+			
 			movedFolder = properties.getProperty("movedFolder");
 			System.out.println(movedFolder);
+			
+			movedFolderBanner = properties.getProperty("movedFolderBanner");
+			System.out.println(movedFolderBanner);
 			
 
 			String thumbnailDestinationFolderString = properties.getProperty("thumbnailDestinationFolder");
@@ -320,27 +328,7 @@ public class ImagesServlet extends HttpServlet {
 							i++;
 						}
 
-						// For banner
-
-						for (int i = 0, j = 0; i < banner.length; i++, j++) {
-
-							int width = Integer.parseInt(banner[i]);
-							int height = Integer.parseInt(banner[i + 1]);
-							System.out.println(width + "X" + height);
-
-							Transform resize3x = ImagesServiceFactory.makeResize(width, height);
-							Image resizeImage3 = imagesService.applyTransform(resize3x, blobImage);
-
-							// Write the transformed image back to a Cloud
-							// Storage object.
-							gcsService.createOrReplace(
-									new GcsFilename(bannerDestinationFolder[j],
-											objectName + "_" + width + "x" + height + ".jpeg"),
-									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-									ByteBuffer.wrap(resizeImage3.getImageData()));
-
-							i++;
-						}
+						
 						
 						String imageName = object.getName();
 						if (imageName.endsWith(".png") || imageName.endsWith(".jpg")) {
@@ -360,62 +348,70 @@ public class ImagesServlet extends HttpServlet {
 					    System.out.println("DESTINATION::::" + dest);
 					    gcsService.delete(source2);
 						
-						/*
-						//StorageObject storage = new StorageObject();
-						Storage storage = null;
-						try {
-							storage = StorageFactory.getService();
-						} catch (GeneralSecurityException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						Storage.Objects.Copy copyObject= storage.objects().copy(bucket +"/"+ sourceImageFolder , object.getName(),  movedFolder, object.getName(), object);
-
-						try {
-						System.out.println("Trying to copy over " + object.getName() + " from " + bucket + sourceImageFolder + " >>>> " + bucket + movedFolder);
-						//copy the file over to the new bucket
-						Object copyRes = copyObject.execute();
-						System.out.println(copyRes.toString());
-						}
-						catch (Exception e) {
-						System.out.println("Exception trying to copy over " + object.getName() + " " + e.getLocalizedMessage());
-						    } */
 						
-						/*
-						Transform rotate = ImagesServiceFactory.makeImFeelingLucky();
-						
-						Image orginalImage3 = imagesService.applyTransform(rotate, blobImage);
-						System.out.println(orginalImage3);
-						
-						gcsService.createOrReplace(
-								new GcsFilename(movedFolder,
-										objectName + ".jpeg"),
-								new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
-								ByteBuffer.wrap(orginalImage3.getImageData())); */
-						/*
-						 * for(int i=0; i< sizes4x.length; i++){
-						 * 
-						 * int width =(Integer)sizes4x[i]; int height =
-						 * (Integer)sizes4x[i+1]; System.out.println(width + "X"
-						 * + height);
-						 * 
-						 * Transform resize4x =
-						 * ImagesServiceFactory.makeResize(width, height); Image
-						 * resizeImage4 = imagesService.applyTransform(resize4x,
-						 * blobImage);
-						 * 
-						 * // Write the transformed image back to a Cloud
-						 * Storage object. gcsService.createOrReplace( new
-						 * GcsFilename(destinationFolder4x, "resizeImage_"+width
-						 * + "x" + height+ ".jpeg"), new
-						 * GcsFileOptions.Builder().mimeType("image/jpeg").build
-						 * (), ByteBuffer.wrap(resizeImage4.getImageData()));
-						 * 
-						 * i++; }
-						 */
 
 					}
 				}
+				
+				//Start Banner Folder
+				
+				if (path.startsWith(sourceImageBannerFolder)) {
+					if ("image/png".equals(object.getContentType())) {
+
+						
+						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+						BlobKey blobKeyBanner = blobstoreService.createGsBlobKey("/gs/" + bucket + "/" + object.getName()); 
+																														
+						
+
+						Image blobImageBanner = ImagesServiceFactory.makeImageFromBlob(blobKeyBanner); 	
+																										
+
+						// For banner
+
+						for (int i = 0, j = 0; i < banner.length; i++, j++) {
+
+							int width = Integer.parseInt(banner[i]);
+							int height = Integer.parseInt(banner[i + 1]);
+							System.out.println(width + "X" + height);
+
+							Transform resize3xx = ImagesServiceFactory.makeResize(width, height);
+							Image resizeImage33 = imagesService.applyTransform(resize3xx, blobImageBanner);
+
+							// Write the transformed image back to a Cloud
+							// Storage object.
+							gcsService.createOrReplace(
+									new GcsFilename(bannerDestinationFolder[j],
+											objectName + "_" + width + "x" + height + ".jpeg"),
+									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
+									ByteBuffer.wrap(resizeImage33.getImageData()));
+
+							i++;
+						}
+						
+						
+						//gcsService.copy("/" + bucket +"/"+ object.getName(), '/'+ movedFolder+ '/' + object);
+						String imageName = object.getName();
+						if (imageName.endsWith(".png") || imageName.endsWith(".jpg")) {
+							imageName = imageName.substring(13, (imageName.length()));
+							System.out.println(imageName);
+						} else if (imageName.endsWith(".jpeg")) {
+							imageName = imageName.substring(13, (imageName.length()));
+							System.out.println(imageName);
+						}
+						
+					GcsFilename sourceBanner = new GcsFilename(bucket, object.getName());
+						GcsFilename sourceBanner2 = new GcsFilename(bucket + "/"+ sourceImageBannerFolder , imageName);
+					    System.out.println("SOURCE::::" + sourceBanner);
+						System.out.println("SOURCE2::::" + sourceBanner2);
+					    GcsFilename destBanner = new GcsFilename(movedFolderBanner, imageName);
+					    gcsService.copy(sourceBanner, destBanner);
+					    System.out.println("DESTINATION::::" + destBanner);
+					    gcsService.delete(sourceBanner2);
+
+
+					}
+				} //End banner folder
 			}
 
 		} // else end
