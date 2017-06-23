@@ -207,18 +207,20 @@ public class ImagesServlet extends HttpServlet {
 
 				System.out.println(object.getName());
 
-				String objectName = object.getName();
-				if (objectName.endsWith(".png") || objectName.endsWith(".jpg")) {
-					objectName = objectName.substring(7, (objectName.length() - 4));
-					System.out.println(objectName);
-				} else if (objectName.endsWith(".jpeg")) {
-					objectName = objectName.substring(7, (objectName.length() - 5));
-					System.out.println(objectName);
-				}
+				
 				String path = object.getName();
 				System.out.println("**********" + path);
 				if (path.startsWith(sourceImageFolder)) {
 					if ("image/png".equals(object.getContentType())) {
+						
+						String objectName = object.getName();
+						if (objectName.endsWith(".png") || objectName.endsWith(".jpg")) {
+							objectName = objectName.substring(7, (objectName.length() - 4));
+							System.out.println(objectName);
+						} else if (objectName.endsWith(".jpeg")) {
+							objectName = objectName.substring(7, (objectName.length() - 5));
+							System.out.println(objectName);
+						}
 
 						// Create a temp file to upload
 						// Path tempPath = Files.createTempFile("StorageSample",
@@ -240,25 +242,9 @@ public class ImagesServlet extends HttpServlet {
 						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 						BlobKey blobKey = blobstoreService.createGsBlobKey("/gs/" + bucket + "/" + object.getName()); // Creating
 																														// a
-																														// BlobKey
-																														// for
-																														// a
-																														// Google
-																														// Storage
-																														// File.
-						// BlobKey blobKey =
-						// blobstoreService.createGsBlobKey("//storage.googleapis.com/"
-						// + bucket + "/Test/unnamed.jpg");
+						
 
 						Image blobImage = ImagesServiceFactory.makeImageFromBlob(blobKey); // Create
-																							// an
-																							// image
-																							// backed
-						byte[] abcd= blobImage.getImageData();
-						System.out.println(abcd);																	// by
-																							// the
-						System.out.println(object.getName());																	// specified
-																							// blobKey.
 
 						// For Thumbnail
 						
@@ -357,6 +343,16 @@ public class ImagesServlet extends HttpServlet {
 				
 				if (path.startsWith(sourceImageBannerFolder)) {
 					if ("image/png".equals(object.getContentType())) {
+						
+						
+						String objectName2 = object.getName();
+						if (objectName2.endsWith(".png") || objectName2.endsWith(".jpg")) {
+							objectName2 = objectName2.substring(13, (objectName2.length() - 4));
+							System.out.println(objectName2);
+						} else if (objectName2.endsWith(".jpeg")) {
+							objectName2 = objectName2.substring(13, (objectName2.length() - 5));
+							System.out.println(objectName2);
+						}
 
 						
 						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -382,7 +378,7 @@ public class ImagesServlet extends HttpServlet {
 							// Storage object.
 							gcsService.createOrReplace(
 									new GcsFilename(bannerDestinationFolder[j],
-											objectName + "_" + width + "x" + height + ".jpeg"),
+											objectName2 + "_" + width + "x" + height + ".jpeg"),
 									new GcsFileOptions.Builder().mimeType("image/jpeg").build(),
 									ByteBuffer.wrap(resizeImage33.getImageData()));
 
